@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ImageService.Infastructure;
 using ImageService.Infastructure.Enums;
+using ImageService.Logging;
 using ImageService.Modal.Event;
 
 namespace ImageService.Controller.Handlers
@@ -14,53 +15,43 @@ namespace ImageService.Controller.Handlers
     class DirectoryHandler : IDirectoryHandler
     {
         private IImageController m_controller;
+        private ILoggingService m_logger;
         private FileSystemWatcher m_dirWatcher;
         private string m_path;
 
-        public DirectoryHandler(IImageController controller)
+        public DirectoryHandler(IImageController controller, ILoggingService logger, string path)
         {
+            m_path = path;
+            m_logger = logger;
             m_controller = controller;
         }
 
         public event EventHandler<DirectoryCloseEventArgs> DirectoryClose;
 
-        public void OnCommandRecieved(object sender, CommandRecievedEventArgs e)
+        public void CloseHandler()
         {
-            if (e.RequestDirPath.CompareTo(m_path) == 0)
+            m_dirWatcher.EnableRaisingEvents = false;  //TODO: check if need to write this method.
+            m_dirWatcher.Dispose();
+            string msg = "Closing Directory!";    //TODO:WHAT message should we pass.
+            DirectoryCloseEventArgs close_args = new DirectoryCloseEventArgs(m_path, msg);
+            DirectoryClose.Invoke(this, close_args);
+        }
+
+        public void OnCommandRecieved(object sender, CommandRecievedEventArgs command_args)
+        {
+            if (command_args.RequestDirPath.CompareTo(m_path) == 0)
             {
-                Console.WriteLine(e.RequestDirPath);
-                /*
-                bool result;
-                string status = m_controller.ExecuteCommand(e.CommandID, e.Args, out result);
-                if (!result)
+                if (command_args.CommandID == (int) CommandEnum.CloseCommand)
                 {
-                    Console.WriteLine(status);
+                    CloseHandler();
                 }
-                */
-            }
-            else
-            {
-                Console.WriteLine("Its not me");
+                m_controller.ExecuteCommand(command_args.CommandID, command_args.Args);
+                //m_logger.Log();    //TODO: update the message to logger.
             }
         }
 
-        public void OnCloseRecieved(object sender, DirectoryCloseEventArgs e)
+        public void StartHandleDirectory()
         {
-            if (e.DirectoryPath.CompareTo(m_path) == 0)
-            {
-                Console.WriteLine(e.Message);
-            }
-        }
-
-        public void Close(DirectoryCloseEventArgs e)
-        {
-            DirectoryClose(this, e);
-        }
-
-        public void StartHandleDirectory(string dirPath)
-        {
-            m_path = dirPath;
-            DirectoryClose += OnCloseRecieved;
             m_dirWatcher = new FileSystemWatcher(m_path)
             {
                 NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName
@@ -76,14 +67,10 @@ namespace ImageService.Controller.Handlers
             if (strFileExt.CompareTo(".jpg") == 0 || strFileExt.CompareTo(".png") == 0
                 || strFileExt.CompareTo(".gif") == 0 || strFileExt.CompareTo(".bmp") == 0)
             {
-                bool result;
-                string[] args = new string[1];
+                string[] args = new string[1];   //TODO:What args should we pass.
                 args[0] = e.FullPath;
-                string status = m_controller.ExecuteCommand((int)CommandEnum.NewFileCommand, args, out result);
-                if (!result)
-                {
-                    Console.WriteLine(status);
-                }
+                m_controller.ExecuteCommand((int)CommandEnum.NewFileCommand, args); //TODO:try catch, message.
+                //m_logger.Log();    //TODO: update the message to logger.
             }
         }
 

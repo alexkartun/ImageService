@@ -23,10 +23,11 @@ namespace ImageService.Controller
             };
         }
 
-        public string ExecuteCommand(int commandID, string[] args, out bool result)
+        public void ExecuteCommand(int commandID, string[] args)
         {
             ICommand command = commands[commandID];
-            return command.Execute(args, out result);
+            var t = Task.Run(() => command.Execute(args));    //TODO: check if it is correct.
+            t.Wait();
         }
     }
 }

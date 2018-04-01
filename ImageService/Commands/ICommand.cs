@@ -8,6 +8,6 @@ namespace ImageService.Commands
 {
     public interface ICommand
     {
-        string Execute(string[] args, out bool result);
+        void Execute(string[] args);
     }
 }

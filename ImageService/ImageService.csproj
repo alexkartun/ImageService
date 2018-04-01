@@ -52,7 +52,7 @@
     <Compile Include="Controller\IImageController.cs" />
     <Compile Include="Controller\ImageController.cs" />
     <Compile Include="Infastructure\Enums\CommandEnum.cs" />
-    <Compile Include="Logger\IlogingService.cs" />
+    <Compile Include="Logger\ILoggingService.cs" />
     <Compile Include="Logger\LoggingService.cs" />
     <Compile Include="Logger\Modal\MessageRecievedEventArgs.cs" />
     <Compile Include="Logger\Modal\MessageTypeEnum.cs" />
@@ -61,11 +61,11 @@
     <Compile Include="Modal\IImageServiceModal.cs" />
     <Compile Include="Modal\ImageServiceModal.cs" />
     <Compile Include="Server\ImageServer.cs" />
-    <Compile Include="Service1.cs">
+    <Compile Include="ImageService.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Service1.Designer.cs">
-      <DependentUpon>Service1.cs</DependentUpon>
+    <Compile Include="ImageService.Designer.cs">
+      <DependentUpon>ImageService.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -75,6 +75,10 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="ImageService.resx">
+      <DependentUpon>ImageService.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

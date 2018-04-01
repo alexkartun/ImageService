@@ -8,6 +8,6 @@ namespace ImageService.Modal
 {
     public interface IImageServiceModal
     {
-        string AddFile(string path, out bool result);
+        void AddFile(string[] args);
     }
 }

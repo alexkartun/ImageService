@@ -10,8 +10,7 @@ namespace ImageService.Controller.Handlers
     public interface IDirectoryHandler
     {
         event EventHandler<DirectoryCloseEventArgs> DirectoryClose;
-        void StartHandleDirectory(string dirPath);
-        void OnCommandRecieved(object sender, CommandRecievedEventArgs e);
-        void OnCloseRecieved(object sender, DirectoryCloseEventArgs e);
+        void StartHandleDirectory();
+        void OnCommandRecieved(object sender, CommandRecievedEventArgs command_args);
     }
 }
