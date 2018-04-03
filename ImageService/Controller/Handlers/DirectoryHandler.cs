@@ -15,18 +15,18 @@ namespace ImageService.Controller.Handlers
     class DirectoryHandler : IDirectoryHandler
     {
         private IImageController m_controller;
-        private ILoggingService m_logger;
+        private ILoggingService m_logger; // server.
         private FileSystemWatcher m_dirWatcher;
         private string m_path;
 
-        public DirectoryHandler(IImageController controller, ILoggingService logger, string path)
+		public event EventHandler<DirectoryCloseEventArgs> DirectoryClose;
+
+		public DirectoryHandler(IImageController controller, ILoggingService logger, string path)
         {
             m_path = path;
             m_logger = logger;
             m_controller = controller;
         }
-
-        public event EventHandler<DirectoryCloseEventArgs> DirectoryClose;
 
         public void CloseHandler()
         {
@@ -46,7 +46,7 @@ namespace ImageService.Controller.Handlers
                     CloseHandler();
                 }
                 m_controller.ExecuteCommand(command_args.CommandID, command_args.Args);
-                //m_logger.Log();    //TODO: update the message to logger.
+                //m_logger.Log();    //TODO: update the message to logger. 
             }
         }
 
@@ -54,11 +54,12 @@ namespace ImageService.Controller.Handlers
         {
             m_dirWatcher = new FileSystemWatcher(m_path)
             {
+				// TODO: what is and is nessesary?
                 NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName
             };
             m_dirWatcher.Filter = "*.*";    // lookup for all extensions.
             m_dirWatcher.Created += new FileSystemEventHandler(OnChanged);
-            m_dirWatcher.EnableRaisingEvents = true;
+            m_dirWatcher.EnableRaisingEvents = true; // check.
         }
 
         private void OnChanged(object source, FileSystemEventArgs e)

@@ -33,9 +33,9 @@ namespace ImageService.Server
 
         private void OnCloseServer(object sender, DirectoryCloseEventArgs close_args)
         {
-            IDirectoryHandler handler = (IDirectoryHandler) sender;
+            IDirectoryHandler handler = (IDirectoryHandler) sender; // TODO: check for optimize down-casting.
             CommandRecieved -= handler.OnCommandRecieved;
-            handler.DirectoryClose -= OnCloseServer;
+            //handler.DirectoryClose -= OnCloseServer;
             logging_service.Log(close_args.Message, MessageTypeEnum.INFO);    //TODO:Check typeEnum, maybe for future events.
         }
 
@@ -44,11 +44,10 @@ namespace ImageService.Server
         {
             string[] paths = directories.Split(';');
             foreach (string path in paths)
-            {
-                CommandRecievedEventArgs command_args = new CommandRecievedEventArgs(
-                    (int) CommandEnum.CloseCommand, null, path);    //TODO:null for args, is it the way?
-                SendCommand(command_args);
-            }
+            {  
+                SendCommand(new CommandRecievedEventArgs(
+					(int) CommandEnum.CloseCommand, null, path)); //TODO:null for args, is it the way?
+			}
         }
 
         // Possible "OnStart" service method.
@@ -59,6 +58,7 @@ namespace ImageService.Server
             {
                 IDirectoryHandler handler = new DirectoryHandler(m_controller, logging_service, path);
                 CommandRecieved += handler.OnCommandRecieved;
+				//TODO: check for relevance (why close event for each handler is needed?).
                 handler.DirectoryClose += OnCloseServer;
                 handler.StartHandleDirectory();
             }
