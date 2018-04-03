@@ -73,6 +73,7 @@ namespace ImageService
 
 		protected override void OnStart(string[] args)
         {
+			eventLogger.WriteEntry("pending start");
 			// Update the service state to Start Pending.  
 			ServiceStatus serviceStatus = new ServiceStatus
 			{
@@ -95,11 +96,13 @@ namespace ImageService
 			// Update the service state to Running.  
 			serviceStatus.dwCurrentState = ServiceState.SERVICE_RUNNING;
 			SetServiceStatus(this.ServiceHandle, ref serviceStatus);
+			eventLogger.WriteEntry("started");
 		}
 
 
         private void OnMsg(object sender, MessageRecievedEventArgs message)
         {
+			eventLogger.WriteEntry("OnMsg test");
 			eventLogger.WriteEntry(message.Message, ConvertStatToEventLogEntry(message), eventId++);
         }
 
@@ -121,6 +124,7 @@ namespace ImageService
 
 		protected override void OnStop()
         {
+			eventLogger.WriteEntry("pending close");
 			ServiceStatus serviceStatus = new ServiceStatus
 			{
 				dwCurrentState = ServiceState.SERVICE_STOP_PENDING,
@@ -136,6 +140,7 @@ namespace ImageService
 			// Update the service state to Running.  
 			serviceStatus.dwCurrentState = ServiceState.SERVICE_STOPPED;
 			SetServiceStatus(this.ServiceHandle, ref serviceStatus);
+			eventLogger.WriteEntry("pending closed");
 		}
     }
 }

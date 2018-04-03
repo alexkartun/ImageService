@@ -32,7 +32,7 @@ namespace ImageService.Controller.Handlers
         {
             m_dirWatcher.EnableRaisingEvents = false;  //TODO: check if need to write this method.
             m_dirWatcher.Dispose();
-            string msg = "Closing Directory!";    //TODO:WHAT message should we pass.
+            string msg = "Closing Directory";    //TODO:WHAT message should we pass.
             DirectoryCloseEventArgs close_args = new DirectoryCloseEventArgs(m_path, msg);
             DirectoryClose.Invoke(this, close_args);
         }
