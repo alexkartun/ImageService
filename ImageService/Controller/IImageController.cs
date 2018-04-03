@@ -5,7 +5,7 @@ namespace ImageService.Controller
 {
     public interface IImageController
     {
-        void ExecuteCommand(int commandID, string[] args);
+        string ExecuteCommand(int commandID, string[] args, out bool result);
     }
 }
 

@@ -16,9 +16,9 @@ namespace ImageService.Commands
             m_modal = modal;
         }
 
-        public void Execute(string[] args)
+        public string Execute(string[] args, out bool result)
         {
-            m_modal.AddFile(args);
+            return m_modal.AddFile(args, out result);
         }
     }
 }

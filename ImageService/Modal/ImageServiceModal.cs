@@ -25,11 +25,12 @@ namespace ImageService.Modal
         // Creates date directories for picture and thumbnail,
         // Copies picture to output_dir,
         // Creates thumbnail out of picture and saves it inside thumbnail dir.
-        public void AddFile(string[] args)
+        public string AddFile(string[] args, out bool result)
         {
             if (args.Length != 2)
             {
-                throw new IOException("Error: Two args must be given.");
+				result = false;
+				return "2 Args must be given to Addfile()";
             }
             string fullPath = args[0];
             string fileName = args[1];
@@ -42,10 +43,13 @@ namespace ImageService.Modal
                 File.Copy(fullPath, Path.Combine(picPathDir, fileName), true);
                 CreateThumbnail(fullPath, thumbnailPathDir, fileName);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+				result = false;
+				return "Error occured moving a picture. Details: " + e.Data.ToString();
             }
+			result = true;
+			return "File added successfully. Picture name: " + fileName;
         }
 
         // Creates year and month directories in scrPath according to DateTime d.

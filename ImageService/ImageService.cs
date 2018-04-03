@@ -43,7 +43,6 @@ namespace ImageService
     {
 		private ILoggingService image_logger;
         private ImageServer image_server;
-		private int eventId = 1;
 
 		public ImageService(string[] args)
         {

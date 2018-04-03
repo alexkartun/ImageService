@@ -47,7 +47,9 @@ namespace ImageService.Controller.Handlers
                 }
                 else
                 {
-                    m_controller.ExecuteCommand(command_args.CommandID, command_args.Args);
+					bool status;
+                    string result =  m_controller.ExecuteCommand(command_args.CommandID,
+						command_args.Args, out status);
                     //m_logger.Log();    //TODO: update the message to logger. 
                 }
             }
