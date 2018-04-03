@@ -41,12 +41,15 @@ namespace ImageService.Controller.Handlers
         {
             if (command_args.RequestDirPath.CompareTo(m_path) == 0)
             {
-                if (command_args.CommandID == (int) CommandEnum.CloseCommand)
+                if (command_args.CommandID == (int)CommandEnum.CloseCommand)
                 {
                     CloseHandler();
                 }
-                m_controller.ExecuteCommand(command_args.CommandID, command_args.Args);
-                //m_logger.Log();    //TODO: update the message to logger. 
+                else
+                {
+                    m_controller.ExecuteCommand(command_args.CommandID, command_args.Args);
+                    //m_logger.Log();    //TODO: update the message to logger. 
+                }
             }
         }
 
@@ -68,8 +71,9 @@ namespace ImageService.Controller.Handlers
             if (strFileExt.CompareTo(".jpg") == 0 || strFileExt.CompareTo(".png") == 0
                 || strFileExt.CompareTo(".gif") == 0 || strFileExt.CompareTo(".bmp") == 0)
             {
-                string[] args = new string[1];   //TODO:What args should we pass.
+                string[] args = new string[2];   //TODO:What args should we pass.
                 args[0] = e.FullPath;
+                args[1] = e.Name;
                 m_controller.ExecuteCommand((int)CommandEnum.NewFileCommand, args); //TODO:try catch, message.
                 //m_logger.Log();    //TODO: update the message to logger.
             }

@@ -73,8 +73,9 @@ namespace ImageService
 
 		protected override void OnStart(string[] args)
         {
-			// Update the service state to Start Pending.  
-			ServiceStatus serviceStatus = new ServiceStatus
+            eventLogger.WriteEntry("OnStart");
+            // Update the service state to Start Pending.  
+            ServiceStatus serviceStatus = new ServiceStatus
 			{
 				dwCurrentState = ServiceState.SERVICE_START_PENDING,
 				dwWaitHint = 100000
@@ -100,7 +101,7 @@ namespace ImageService
 
         public void OnMsg(object sender, MessageRecievedEventArgs message)
         {
-			eventLogger.WriteEntry(message.Message, ConvertStatToEventLogEntry(message), eventId++);
+			eventLogger.WriteEntry(message.Message);
         }
 
 		// Converts status enum of message to a built-in EventLogger entry type.
@@ -129,7 +130,7 @@ namespace ImageService
 			SetServiceStatus(this.ServiceHandle, ref serviceStatus);
 
 			// What happens here? stop handlers? not on server?
-			//eventLogger.WriteEntry("OnStop");
+			eventLogger.WriteEntry("OnStop");
             string directories = ConfigurationManager.AppSettings["Handler"];
             image_server.StopHandlers(directories);
 

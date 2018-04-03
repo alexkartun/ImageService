@@ -48,6 +48,7 @@ namespace ImageService.Server
                 SendCommand(new CommandRecievedEventArgs(
 					(int) CommandEnum.CloseCommand, null, path)); //TODO:null for args, is it the way?
 			}
+            logging_service.Log("Done closing", MessageTypeEnum.INFO);
         }
 
         // Possible "OnStart" service method.
