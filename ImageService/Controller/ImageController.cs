@@ -28,7 +28,7 @@ namespace ImageService.Controller
 		public string ExecuteCommand(int commandID, string[] args, out bool status)
 		{
 			ICommand command = commands[commandID];
-            Task<Tuple<string, bool>> task = new Task<Tuple<string, bool>>(() => 
+            Task<Tuple<string, bool>> task = Task.Run<Tuple<string, bool>>(() => 
                 { return GetDataTask(command, args); });
             task.Wait();
             var value = task.Result;
