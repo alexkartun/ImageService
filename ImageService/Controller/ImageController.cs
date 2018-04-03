@@ -26,7 +26,7 @@ namespace ImageService.Controller
         public void ExecuteCommand(int commandID, string[] args)
         {
             ICommand command = commands[commandID];
-            var t = Task.Run(() => command.Execute(args));    //TODO: check if it is correct. check systax.
+            Task t = Task.Run(() => command.Execute(args));    //TODO: check if it is correct. check systax.
             t.Wait(); // check why.
         }
     }

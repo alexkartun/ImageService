@@ -33,7 +33,7 @@
 			// 
 			// ImageService
 			// 
-			this.ServiceName = "Service1";
+			this.ServiceName = "ImageService";
 			((System.ComponentModel.ISupportInitialize)(this.eventLogger)).EndInit();
 
         }
