@@ -100,7 +100,7 @@ namespace ImageService
 		}
 
 
-        private void OnMsg(object sender, MessageRecievedEventArgs message)
+        public void OnMsg(object sender, MessageRecievedEventArgs message)
         {
 			eventLogger.WriteEntry("OnMsg test");
 			eventLogger.WriteEntry(message.Message, ConvertStatToEventLogEntry(message), eventId++);
