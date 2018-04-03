@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using ImageService.Infastructure;
 using ImageService.Infastructure.Enums;
 using ImageService.Logging;
+using ImageService.Logging.Modal;
 using ImageService.Modal.Event;
 
 namespace ImageService.Controller.Handlers
@@ -47,10 +48,17 @@ namespace ImageService.Controller.Handlers
                 }
                 else
                 {
-					bool status;
-                    string result =  m_controller.ExecuteCommand(command_args.CommandID,
-						command_args.Args, out status);
-                    //m_logger.Log();    //TODO: update the message to logger. 
+                    bool status;
+                    string result = m_controller.ExecuteCommand(command_args.CommandID,
+                        command_args.Args, out status);
+                    if (!status)
+                    {
+                        m_logger.Log(result, MessageTypeEnum.FAIL);    //TODO: update the message to logger. 
+                    }
+                    else
+                    {
+                        m_logger.Log(result, MessageTypeEnum.INFO);
+                    }
                 }
             }
         }
@@ -73,11 +81,19 @@ namespace ImageService.Controller.Handlers
             if (strFileExt.CompareTo(".jpg") == 0 || strFileExt.CompareTo(".png") == 0
                 || strFileExt.CompareTo(".gif") == 0 || strFileExt.CompareTo(".bmp") == 0)
             {
+                bool status;
                 string[] args = new string[2];   //TODO:What args should we pass.
                 args[0] = e.FullPath;
                 args[1] = e.Name;
-                m_controller.ExecuteCommand((int)CommandEnum.NewFileCommand, args); //TODO:try catch, message.
-                //m_logger.Log();    //TODO: update the message to logger.
+                string result = m_controller.ExecuteCommand((int)CommandEnum.NewFileCommand, args, out status);
+                if (!status)
+                {
+                    m_logger.Log(result, MessageTypeEnum.FAIL);
+                }
+                else
+                {
+                    m_logger.Log(result, MessageTypeEnum.INFO);
+                }
             }
         }
 

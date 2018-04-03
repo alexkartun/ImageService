@@ -28,17 +28,19 @@ namespace ImageService.Controller
 		public string ExecuteCommand(int commandID, string[] args, out bool status)
 		{
 			ICommand command = commands[commandID];
-			commandFunc cmd = new commandFunc(command.Execute);
-			Task<string> t = new Task<string>(() => cmd(args, out status));
-			
+            Task<Tuple<string, bool>> task = new Task<Tuple<string, bool>>(() => 
+                { return GetDataTask(command, args); });
+            task.Wait();
+            var value = task.Result;
+            status = value.Item2;
+			return value.Item1;
+        }
 
-				/*Task t = Task.Run(() =>
-				{
-				string outMessage = command.Execute(args, out result);
-				}	*/
-				//TODO: check if it is correct. check systax.
-		    t.Wait(); // check why.
-			return t.Result;
+        private Tuple<string, bool> GetDataTask(ICommand command, string[] args)
+        {
+            bool status;
+            string result = command.Execute(args, out status);
+            return new Tuple<string, bool>(result, status);
         }
 	}
 }
