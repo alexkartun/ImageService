@@ -10,30 +10,30 @@ using ImageService.Infastructure.Enums;
 using ImageService.Logging;
 using ImageService.Logging.Modal;
 using ImageService.Modal.Event;
+using ImageService.Server;
 
 namespace ImageService.Controller.Handlers
 {
     class DirectoryHandler : IDirectoryHandler
     {
         private IImageController m_controller;
-        private ILoggingService m_logger; // server.
         private FileSystemWatcher m_dirWatcher;
         private string m_path;
 
 		public event EventHandler<DirectoryCloseEventArgs> DirectoryClose;
+		public event EventHandler<MessageRecievedEventArgs> DirectoryAction; // Standart commands (AddFile etc.)
 
 		public DirectoryHandler(IImageController controller, ILoggingService logger, string path)
         {
             m_path = path;
-            m_logger = logger;
             m_controller = controller;
         }
 
         public void CloseHandler()
         {
-            m_dirWatcher.EnableRaisingEvents = false;  //TODO: check if need to write this method.
-            m_dirWatcher.Dispose();
-            string msg = "Closing Directory!";    //TODO:WHAT message should we pass.
+            m_dirWatcher.EnableRaisingEvents = false;
+            m_dirWatcher.Dispose(); // dirWatcher is no longer listening.
+            string msg = "Closing directory successfully: "; // TODO: when is not successfully??
             DirectoryCloseEventArgs close_args = new DirectoryCloseEventArgs(m_path, msg);
             DirectoryClose.Invoke(this, close_args);
         }
@@ -48,29 +48,15 @@ namespace ImageService.Controller.Handlers
                 }
                 else
                 {
-                    bool status;
-                    string result = m_controller.ExecuteCommand(command_args.CommandID,
-                        command_args.Args, out status);
-                    if (!status)
-                    {
-                        m_logger.Log(result, MessageTypeEnum.FAIL);    //TODO: update the message to logger. 
-                    }
-                    else
-                    {
-                        m_logger.Log(result, MessageTypeEnum.INFO);
-                    }
-                }
+					DoFileAction(command_args);
+				}
             }
         }
 
         public void StartHandleDirectory()
         {
-            m_dirWatcher = new FileSystemWatcher(m_path)
-            {
-				// TODO: what is and is nessesary?
-                NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName
-            };
-            m_dirWatcher.Filter = "*.*";    // lookup for all extensions.
+			m_dirWatcher = new FileSystemWatcher(m_path);
+            m_dirWatcher.Filter = "*.*";    // lookup for all extensions. - Filter in OnChanged() method.
             m_dirWatcher.Created += new FileSystemEventHandler(OnChanged);
             m_dirWatcher.EnableRaisingEvents = true; // check.
         }
@@ -78,24 +64,36 @@ namespace ImageService.Controller.Handlers
         private void OnChanged(object source, FileSystemEventArgs e)
         {
             string strFileExt = GetFileExt(e.FullPath);
+			// Filter for pictures only.
             if (strFileExt.CompareTo(".jpg") == 0 || strFileExt.CompareTo(".png") == 0
                 || strFileExt.CompareTo(".gif") == 0 || strFileExt.CompareTo(".bmp") == 0)
             {
-                bool status;
-                string[] args = new string[2];   //TODO:What args should we pass.
-                args[0] = e.FullPath;
-                args[1] = e.Name;
-                string result = m_controller.ExecuteCommand((int)CommandEnum.NewFileCommand, args, out status);
-                if (!status)
-                {
-                    m_logger.Log(result, MessageTypeEnum.FAIL);
-                }
-                else
-                {
-                    m_logger.Log(result, MessageTypeEnum.INFO);
-                }
+				string[] args = { e.FullPath, e.Name };
+				CommandRecievedEventArgs cmd_args = new CommandRecievedEventArgs
+					((int) CommandEnum.NewFileCommand, args, null);
+				DoFileAction(cmd_args);
             }
         }
+
+		private void DoFileAction(CommandRecievedEventArgs args)
+		{
+			bool status;
+			string result = m_controller.ExecuteCommand(args.CommandID,
+				args.Args, out status);
+			if (!status)
+			{
+				MessageRecievedEventArgs msg_args =
+					new MessageRecievedEventArgs(result, MessageTypeEnum.FAIL);
+				DirectoryAction.Invoke(this, msg_args);
+			}
+			else
+			{
+				MessageRecievedEventArgs msg_args =
+					new MessageRecievedEventArgs(result, MessageTypeEnum.INFO);
+				DirectoryAction.Invoke(this, msg_args);
+			}
+		}
+
 
         private static string GetFileExt(string filePath)
         {

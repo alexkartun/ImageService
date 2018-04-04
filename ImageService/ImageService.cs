@@ -44,23 +44,15 @@ namespace ImageService
 		private ILoggingService image_logger;
         private ImageServer image_server;
 
-		public ImageService(string[] args)
+		public ImageService()
         {
             InitializeComponent();
-			eventLogger = new System.Diagnostics.EventLog();
+			eventLogger = new EventLog();
 			string eventSourceName = ConfigurationManager.AppSettings["SourceName"];
 			string logName = ConfigurationManager.AppSettings["LogName"];
-			if (args.Count() > 0)
+			if (!EventLog.SourceExists(eventSourceName))
 			{
-				eventSourceName = args[0];
-			}
-			if (args.Count() > 1)
-			{
-				logName = args[1];
-			}
-			if (!System.Diagnostics.EventLog.SourceExists(eventSourceName))
-			{
-				System.Diagnostics.EventLog.CreateEventSource(
+				EventLog.CreateEventSource(
 					eventSourceName, logName);
 			}
 			eventLogger.Source = eventSourceName;
@@ -89,7 +81,6 @@ namespace ImageService
             IImageServiceModal image_modal = new ImageServiceModal(output_dir_path, int.Parse(thumbnail_size));
             IImageController controller = new ImageController(image_modal);
             image_server = new ImageServer(controller, image_logger);
-			// TODO: Service constructs all except HANDLER.
             image_server.CreateHandlers(directories);
 
 			// Update the service state to Running.  
@@ -100,24 +91,8 @@ namespace ImageService
 
         public void OnMsg(object sender, MessageRecievedEventArgs message)
         {
-			eventLogger.WriteEntry(message.Message);
+			eventLogger.WriteEntry(message.Message, ConvertStatToEventLogEntry(message));
         }
-
-		// Converts status enum of message to a built-in EventLogger entry type.
-		private EventLogEntryType ConvertStatToEventLogEntry(MessageRecievedEventArgs msg)
-		{
-			switch ((int) msg.Status)
-			{
-				case 0:
-					return EventLogEntryType.Information;
-				case 1:
-					return EventLogEntryType.Warning;
-				case 2:
-					return EventLogEntryType.Error;
-			}
-			throw new Exception("Not valid msg given");
-		}
-
 
 		protected override void OnStop()
         {
@@ -128,7 +103,6 @@ namespace ImageService
 			};
 			SetServiceStatus(this.ServiceHandle, ref serviceStatus);
 
-			// What happens here? stop handlers? not on server?
 			eventLogger.WriteEntry("OnStop");
             string directories = ConfigurationManager.AppSettings["Handler"];
             image_server.StopHandlers(directories);
@@ -137,5 +111,20 @@ namespace ImageService
 			serviceStatus.dwCurrentState = ServiceState.SERVICE_STOPPED;
 			SetServiceStatus(this.ServiceHandle, ref serviceStatus);
 		}
-    }
+
+		// Converts status enum of message to a built-in EventLogger entry type.
+		private EventLogEntryType ConvertStatToEventLogEntry(MessageRecievedEventArgs msg)
+		{
+			switch ((int)msg.Status)
+			{
+				case 0:
+					return EventLogEntryType.Information;
+				case 1:
+					return EventLogEntryType.Warning;
+				case 2:
+					return EventLogEntryType.Error;
+			}
+			throw new Exception("Not valid msg given");
+		}
+	}
 }

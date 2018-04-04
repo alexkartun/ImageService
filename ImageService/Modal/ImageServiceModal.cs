@@ -39,14 +39,20 @@ namespace ImageService.Modal
                 DateTime creation = File.GetCreationTime(fullPath);
                 string picPathDir = CreateDateDirectory(m_OutputFolder, creation);
                 string thumbnailPathDir = CreateDateDirectory(m_ThumbnailFolder, creation);
-                // TODO: check if copy/move.
-                File.Copy(fullPath, Path.Combine(picPathDir, fileName), true);
-                CreateThumbnail(fullPath, thumbnailPathDir, fileName);
+				string destFilePath = Path.Combine(picPathDir, fileName);
+
+				while (File.Exists(destFilePath)) // Exists a picture with same name. Renaming current pic.
+				{
+					fileName = "cpy_" + fileName;
+					destFilePath = Path.Combine(picPathDir, fileName);
+				}
+				File.Move(fullPath, destFilePath);
+				CreateThumbnail(destFilePath, thumbnailPathDir, fileName);
             }
             catch (Exception e)
             {
 				result = false;
-				return "Error occured moving a picture. Details: " + e.Data.ToString();
+				return "Error occured moving picture: " + fileName + ". Details: " + e.Data.ToString();
             }
 			result = true;
 			return "File added successfully. Picture name: " + fileName;

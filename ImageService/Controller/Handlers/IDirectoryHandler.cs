@@ -1,4 +1,5 @@
-﻿using ImageService.Modal.Event;
+﻿using ImageService.Logging.Modal;
+using ImageService.Modal.Event;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,8 @@ namespace ImageService.Controller.Handlers
     public interface IDirectoryHandler
     {
         event EventHandler<DirectoryCloseEventArgs> DirectoryClose;
-        void StartHandleDirectory();
+		event EventHandler<MessageRecievedEventArgs> DirectoryAction;
+		void StartHandleDirectory();
         void OnCommandRecieved(object sender, CommandRecievedEventArgs command_args);
     }
 }

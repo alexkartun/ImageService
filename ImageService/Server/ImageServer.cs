@@ -13,10 +13,10 @@ using System.Threading.Tasks;
 
 namespace ImageService.Server
 {
-    public class ImageServer
-    {
-        private IImageController m_controller;
-        private ILoggingService logging_service;
+	public class ImageServer
+	{
+		private IImageController m_controller;
+		private ILoggingService logging_service;
 
         public event EventHandler<CommandRecievedEventArgs> CommandRecieved;
 
@@ -28,6 +28,7 @@ namespace ImageService.Server
 
         public void SendCommand(CommandRecievedEventArgs command_args)
         {
+
             CommandRecieved.Invoke(this, command_args);
         }
 
@@ -35,22 +36,25 @@ namespace ImageService.Server
         {
             IDirectoryHandler handler = (IDirectoryHandler) sender; // TODO: check for optimize down-casting.
             CommandRecieved -= handler.OnCommandRecieved;
-            //handler.DirectoryClose -= OnCloseServer;
-            logging_service.Log(close_args.Message, MessageTypeEnum.INFO);    //TODO:Check typeEnum, maybe for future events.
+			//TODO: check failiure possibility.
+            logging_service.Log(close_args.Message + close_args.DirectoryPath, MessageTypeEnum.INFO);
         }
 
-        // Possible "OnStop" service method.
-        public void StopHandlers(string directories)
+		private void MessageLogger(object sender, MessageRecievedEventArgs msg_args)
+		{
+			logging_service.Log(msg_args.Message, msg_args.Status);
+		}
+
+		public void StopHandlers(string directories)
         {
             string[] paths = directories.Split(';');
             foreach (string path in paths)
             {  
                 SendCommand(new CommandRecievedEventArgs(
-					(int) CommandEnum.CloseCommand, null, path)); //TODO:null for args, is it the way?
+					(int) CommandEnum.CloseCommand, null, path));
 			}
         }
 
-        // Possible "OnStart" service method.
         public void CreateHandlers(string directories)
         {
             string[] paths = directories.Split(';');
@@ -58,9 +62,9 @@ namespace ImageService.Server
             {
                 IDirectoryHandler handler = new DirectoryHandler(m_controller, logging_service, path);
                 CommandRecieved += handler.OnCommandRecieved;
-				//TODO: check for relevance (why close event for each handler is needed?).
                 handler.DirectoryClose += OnCloseServer;
-                handler.StartHandleDirectory();
+				handler.DirectoryAction += MessageLogger;
+				handler.StartHandleDirectory();
             }
         }
     }

@@ -29,14 +29,14 @@ namespace ImageService.Controller
 		{
 			ICommand command = commands[commandID];
             Task<Tuple<string, bool>> task = Task.Run<Tuple<string, bool>>(() => 
-                { return GetDataTask(command, args); });
+                { return CommandAction(command, args); });
             task.Wait();
             var value = task.Result;
             status = value.Item2;
 			return value.Item1;
         }
 
-        private Tuple<string, bool> GetDataTask(ICommand command, string[] args)
+        private Tuple<string, bool> CommandAction(ICommand command, string[] args)
         {
             bool status;
             string result = command.Execute(args, out status);
