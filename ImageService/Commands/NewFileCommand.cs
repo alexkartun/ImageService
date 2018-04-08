@@ -1,9 +1,4 @@
 ﻿using ImageService.Modal;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ImageService.Commands
 {
@@ -16,6 +11,9 @@ namespace ImageService.Commands
             m_modal = modal;
         }
 
+        /// <summary>
+        /// New file command execution. Add file called.
+        /// </summary>
         public string Execute(string[] args, out bool result)
         {
             return m_modal.AddFile(args, out result);

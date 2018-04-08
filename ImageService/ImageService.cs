@@ -5,11 +5,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
-using System.Linq;
 using System.ServiceProcess;
 using System.Configuration;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using ImageService.Logging.Modal;
 using ImageService.Modal;
@@ -72,7 +69,7 @@ namespace ImageService
 				dwWaitHint = 100000
 			};
 			SetServiceStatus(this.ServiceHandle, ref serviceStatus);
-
+            // Get the paths from app config.
             string directories = ConfigurationManager.AppSettings["Handler"];
             string output_dir_path = ConfigurationManager.AppSettings["OutputDir"];
             string thumbnail_size = ConfigurationManager.AppSettings["ThumbnailSize"];
@@ -81,6 +78,7 @@ namespace ImageService
             IImageServiceModal image_modal = new ImageServiceModal(output_dir_path, int.Parse(thumbnail_size));
             IImageController controller = new ImageController(image_modal);
             image_server = new ImageServer(controller, image_logger);
+            // Create handlers and start handling.
             image_server.CreateHandlers(directories);
 
 			// Update the service state to Running.  
@@ -88,7 +86,11 @@ namespace ImageService
 			SetServiceStatus(this.ServiceHandle, ref serviceStatus);
 		}
 
-
+        /// <summary>
+        /// Write entry to event log. Specific message will be written.
+        /// </summary>
+        /// <param name="sender"> Sender object requesting write entry. </param>
+        /// <param name="message"> Message that will be written. </param>
         public void OnMsg(object sender, MessageRecievedEventArgs message)
         {
 			eventLogger.WriteEntry(message.Message, ConvertStatToEventLogEntry(message));
@@ -105,6 +107,7 @@ namespace ImageService
 
 			eventLogger.WriteEntry("OnStop");
             string directories = ConfigurationManager.AppSettings["Handler"];
+            // Stop the handlers.
             image_server.StopHandlers(directories);
 
 			// Update the service state to Running.  
@@ -112,8 +115,12 @@ namespace ImageService
 			SetServiceStatus(this.ServiceHandle, ref serviceStatus);
 		}
 
-		// Converts status enum of message to a built-in EventLogger entry type.
-		private EventLogEntryType ConvertStatToEventLogEntry(MessageRecievedEventArgs msg)
+        /// <summary>
+        /// Converts status enum of message to a built-in EventLogger entry type.
+        /// </summary>
+        /// <param name="msg"> Message args recieved. </param>
+        /// <returns> Return event log entry type. </returns>
+        private EventLogEntryType ConvertStatToEventLogEntry(MessageRecievedEventArgs msg)
 		{
 			switch ((int)msg.Status)
 			{

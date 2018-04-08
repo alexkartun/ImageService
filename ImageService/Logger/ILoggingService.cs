@@ -9,7 +9,13 @@ namespace ImageService.Logging
 {
     public interface ILoggingService
     {
+        // Event handler for updating the event logger of the service.
         event EventHandler<MessageRecievedEventArgs> MessageRecieved;
-        void Log(string message, MessageTypeEnum type);           // Logging the Message
+        /// <summary>
+        /// Write the message to event logger via event MessageRecieved.
+        /// </summary>
+        /// <param name="message"> Message to be written in event entry. </param>
+        /// <param name="type"> Type of the message. </param>
+        void Log(string message, MessageTypeEnum type);
     }
 }

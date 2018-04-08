@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Drawing;
 
 namespace ImageService.Modal
@@ -22,11 +21,14 @@ namespace ImageService.Modal
             m_thumbnailSize = thumbnail_size;
         }
 
-        // Creates date directories for picture and thumbnail,
-        // Copies picture to output_dir,
-        // Creates thumbnail out of picture and saves it inside thumbnail dir.
+        /// <summary>
+        /// Creates date directories for picture and thumbnail,
+        /// Copies picture to output_dir,
+        /// Creates thumbnail out of picture and saves it inside thumbnail dir.
+        /// </summary>
         public string AddFile(string[] args, out bool result)
         {
+            // args length should be 2.
             if (args.Length != 2)
             {
 				result = false;
@@ -40,8 +42,8 @@ namespace ImageService.Modal
                 string picPathDir = CreateDateDirectory(m_OutputFolder, creation);
                 string thumbnailPathDir = CreateDateDirectory(m_ThumbnailFolder, creation);
 				string destFilePath = Path.Combine(picPathDir, fileName);
-
-				while (File.Exists(destFilePath)) // Exists a picture with same name. Renaming current pic.
+                // Exists a picture with same name. Renaming current pic.
+                while (File.Exists(destFilePath))
 				{
 					fileName = "cpy_" + fileName;
 					destFilePath = Path.Combine(picPathDir, fileName);
@@ -58,7 +60,12 @@ namespace ImageService.Modal
 			return "File added successfully. Picture name: " + fileName;
         }
 
-        // Creates year and month directories in scrPath according to DateTime d.
+        /// <summary>
+        /// Creates year and month directories in scrPath according to DateTime d.
+        /// </summary>
+        /// <param name="srcPath"> Source path of the image. </param>
+        /// <param name="d"> Date time of image creation. </param>
+        /// <returns> Return the date path directory representation. </returns>
         private static string CreateDateDirectory(string srcPath, DateTime d)
         {
             string month = d.Month.ToString();
@@ -68,8 +75,13 @@ namespace ImageService.Modal
             return datePathDir;
         }
 
-        // Creates thumbnail out of picture and saves it in thumbDest directory.
-        // Using thumbnail size class member.
+        /// <summary>
+        /// Creates thumbnail out of picture and saves it in thumbDest directory.
+        /// Using thumbnail size class member.
+        /// </summary>
+        /// <param name="picPath"> Image path. </param>
+        /// <param name="thumbDest"> Thumbnail path destination. </param>
+        /// <param name="name"> Name of the thumbnail. </param>
         private void CreateThumbnail(string picPath, string thumbDest, string name)
         {
             Image image = Image.FromFile(picPath);
