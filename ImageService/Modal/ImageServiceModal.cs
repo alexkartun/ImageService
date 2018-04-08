@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Drawing;
+using System.Text.RegularExpressions;
+using System.Text;
+using System.Drawing.Imaging;
 
 namespace ImageService.Modal
 {
@@ -14,7 +17,9 @@ namespace ImageService.Modal
         {
             // Creates output file on construction.
             m_OutputFolder = Path.Combine(output_folder, "OutputDir");
-            Directory.CreateDirectory(m_OutputFolder);
+            DirectoryInfo dir = Directory.CreateDirectory(m_OutputFolder);
+            // Hide the directory.
+            dir.Attributes = FileAttributes.Hidden;
             // Creates Thumbnails subdir on construction.
             m_ThumbnailFolder = Path.Combine(m_OutputFolder, "Thumbnails");
             Directory.CreateDirectory(m_ThumbnailFolder);
