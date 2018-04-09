@@ -28,10 +28,17 @@ namespace ImageService.Controller.Handlers
         /// </summary>
         private void CloseHandler()
         {
-            m_dirWatcher.EnableRaisingEvents = false;
-            // dirWatcher is no longer listening.
-            m_dirWatcher.Dispose();
             string msg = "Closing directory successfully: ";
+            try
+            {
+                m_dirWatcher.EnableRaisingEvents = false;
+                // dirWatcher is no longer listening.
+                m_dirWatcher.Dispose();
+            } 
+            catch(Exception e)
+            {
+                msg = "Error occured closing handler: " + m_path + ". Details: " + e.Data.ToString();
+            }
             DirectoryCloseEventArgs close_args = new DirectoryCloseEventArgs(m_path, msg);
             DirectoryClose.Invoke(this, close_args);
         }
@@ -56,16 +63,62 @@ namespace ImageService.Controller.Handlers
 
         public void StartHandleDirectory()
         {
-			m_dirWatcher = new FileSystemWatcher(m_path);
+            string msg = "Start handling directory: " + m_path;
+            try
+            {
+                m_dirWatcher = new FileSystemWatcher(m_path);
+            }
+            catch (Exception e)
+            {
+                // Update logger about failure on starting handling.
+                msg = "Error occured starting handler: " + m_path + ". Details: " + e.Data.ToString();
+                DirectoryCloseEventArgs close_args = new DirectoryCloseEventArgs(m_path, msg);
+                DirectoryClose.Invoke(this, close_args);
+                return;
+            }
             // lookup for all extensions. - Filter in OnChanged() method.
             m_dirWatcher.Filter = "*.*";
             m_dirWatcher.Created += new FileSystemEventHandler(OnChanged);
             m_dirWatcher.EnableRaisingEvents = true;
+            // Update logger about starting handling.
+            MessageRecievedEventArgs msg_args =
+                    new MessageRecievedEventArgs(msg, MessageTypeEnum.INFO);
+            DirectoryAction.Invoke(this, msg_args);
+        }
+
+        /// <summary>
+        /// Checking if the current file is already in use.
+        /// </summary>
+        /// <param name="file"> File to be checked. </param>
+        /// <returns> Return true if in use and false otherwise. </returns>
+        private bool IsFileLocked(FileInfo file)
+        {
+            FileStream stream = null;
+            try
+            {
+                stream = file.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            }
+            catch (IOException)
+            {
+                //the file is unavailable because it is:
+                //still being written to
+                //or being processed by another thread
+                //or does not exist (has already been processed)
+                return true;
+            }
+            finally
+            {
+                if (stream != null)
+                    stream.Close();
+            }
+            //file is not locked
+            return false;
         }
 
         /// <summary>
         /// When image was created on directory. Check the extanssion of the image.
         /// Build command args for new file command and send to cotroller for execution.
+        /// Checks if the file is in use already.
         /// </summary>
         /// <param name="source"> Object sender. </param>
         /// <param name="e"> File system event arguments. </param>
@@ -76,7 +129,12 @@ namespace ImageService.Controller.Handlers
             if (strFileExt.CompareTo(".jpg") == 0 || strFileExt.CompareTo(".png") == 0
                 || strFileExt.CompareTo(".gif") == 0 || strFileExt.CompareTo(".bmp") == 0)
             {
-				string[] args = { e.FullPath, e.Name };
+                // Checks if file is already in use.
+                if (IsFileLocked(new FileInfo(e.FullPath)))
+                {
+                    return;
+                }
+                string[] args = { e.FullPath, e.Name };
 				CommandRecievedEventArgs cmd_args = new CommandRecievedEventArgs
 					((int) CommandEnum.NewFileCommand, args, null);
 				DoFileAction(cmd_args);
