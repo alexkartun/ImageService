@@ -26,6 +26,7 @@ namespace ImageService.Modal
         /// </summary>
         public string AddFile(string[] args, out bool result)
         {
+            bool warning = false;
             // args length should be 2.
             if (args.Length != 2)
             {
@@ -51,6 +52,7 @@ namespace ImageService.Modal
                 // Exists a picture with same name. Renaming current pic.
                 while (File.Exists(destFilePath))
 				{
+                    warning = true;
 					fileName = "cpy_" + fileName;
 					destFilePath = Path.Combine(picPathDir, fileName);
 				}
@@ -61,6 +63,11 @@ namespace ImageService.Modal
             {
 				result = false;
 				return "Error occured moving picture: " + fileName + ". Details: " + e.Data.ToString();
+            }
+            if (warning)
+            {
+                result = true;
+                return "Warning name changed. File added successfully. Picture name: " + fileName;
             }
 			result = true;
 			return "File added successfully. Picture name: " + fileName;

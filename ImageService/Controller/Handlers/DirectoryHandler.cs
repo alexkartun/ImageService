@@ -40,7 +40,7 @@ namespace ImageService.Controller.Handlers
                 msg = "Error occured closing handler: " + m_path + ". Details: " + e.Data.ToString();
             }
             DirectoryCloseEventArgs close_args = new DirectoryCloseEventArgs(m_path, msg);
-            DirectoryClose.Invoke(this, close_args);
+            DirectoryClose(this, close_args);
         }
 
         public void OnCommandRecieved(object sender, CommandRecievedEventArgs command_args)
@@ -73,7 +73,7 @@ namespace ImageService.Controller.Handlers
                 // Update logger about failure on starting handling.
                 msg = "Error occured starting handler: " + m_path + ". Details: " + e.Data.ToString();
                 DirectoryCloseEventArgs close_args = new DirectoryCloseEventArgs(m_path, msg);
-                DirectoryClose.Invoke(this, close_args);
+                DirectoryClose(this, close_args);
                 return;
             }
             // lookup for all extensions. - Filter in OnChanged() method.
@@ -83,7 +83,7 @@ namespace ImageService.Controller.Handlers
             // Update logger about starting handling.
             MessageRecievedEventArgs msg_args =
                     new MessageRecievedEventArgs(msg, MessageTypeEnum.INFO);
-            DirectoryAction.Invoke(this, msg_args);
+            DirectoryAction(this, msg_args);
         }
 
         /// <summary>
@@ -156,14 +156,14 @@ namespace ImageService.Controller.Handlers
 			{
 				MessageRecievedEventArgs msg_args =
 					new MessageRecievedEventArgs(result, MessageTypeEnum.FAIL);
-				DirectoryAction.Invoke(this, msg_args);
+				DirectoryAction(this, msg_args);
 			}
             // otherwise,
 			else
 			{
 				MessageRecievedEventArgs msg_args =
 					new MessageRecievedEventArgs(result, MessageTypeEnum.INFO);
-				DirectoryAction.Invoke(this, msg_args);
+				DirectoryAction(this, msg_args);
 			}
 		}
 

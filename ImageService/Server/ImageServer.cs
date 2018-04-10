@@ -27,7 +27,7 @@ namespace ImageService.Server
         /// <param name="command_args"> Command args for execution of the command. </param>
         public void SendCommand(CommandRecievedEventArgs command_args)
         {
-            CommandRecieved.Invoke(this, command_args);
+            CommandRecieved(this, command_args);
         }
 
         /// <summary>
