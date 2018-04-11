@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ImageService.Logging.Modal;
 
 namespace ImageService.Modal
 {
@@ -14,6 +15,6 @@ namespace ImageService.Modal
         /// <param name="args"> Args of the command including name and path of the image. </param>
         /// <param name="result"> Result of success or failure. </param>
         /// <returns> Return exception message if was throwed or success message. </returns>
-        string AddFile(string[] args, out bool result);
+        string AddFile(string[] args, out MessageTypeEnum result);
     }
 }

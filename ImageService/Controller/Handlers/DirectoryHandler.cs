@@ -148,23 +148,13 @@ namespace ImageService.Controller.Handlers
         /// <param name="args"> Arguments of command. </param>
 		private void DoFileAction(CommandRecievedEventArgs args)
 		{
-			bool status;
+			MessageTypeEnum status;
 			string result = m_controller.ExecuteCommand(args.CommandID,
 				args.Args, out status);
-            // status = false/failure
-			if (!status)
-			{
-				MessageRecievedEventArgs msg_args =
-					new MessageRecievedEventArgs(result, MessageTypeEnum.FAIL);
-				DirectoryAction(this, msg_args);
-			}
-            // otherwise,
-			else
-			{
-				MessageRecievedEventArgs msg_args =
-					new MessageRecievedEventArgs(result, MessageTypeEnum.INFO);
-				DirectoryAction(this, msg_args);
-			}
+
+			MessageRecievedEventArgs msg_args =
+					new MessageRecievedEventArgs(result, status);
+			DirectoryAction(this, msg_args);
 		}
 
         /// <summary>

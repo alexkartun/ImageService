@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using ImageService.Infastructure.Enums;
 using System.Threading.Tasks;
+using ImageService.Logging.Modal;
 
 namespace ImageService.Controller
 {
@@ -22,11 +23,11 @@ namespace ImageService.Controller
             };
         }
 
-		public string ExecuteCommand(int commandID, string[] args, out bool status)
+		public string ExecuteCommand(int commandID, string[] args, out MessageTypeEnum status)
 		{
 			ICommand command = commands[commandID];
             // Create task for every command that we want to execute. 
-            Task<Tuple<string, bool>> task = Task.Run<Tuple<string, bool>>(() => 
+            Task<Tuple<string, MessageTypeEnum>> task = Task.Run(() => 
                 { return CommandAction(command, args); });
             // Father wait for son to finish and get the result after execution.
             task.Wait();
@@ -43,11 +44,11 @@ namespace ImageService.Controller
         /// <param name="args"> Arguments of the command. </param>
         /// <returns> Return tuple type including 2 items: string representation and bollean status of execution. 
         /// </returns>
-        private Tuple<string, bool> CommandAction(ICommand command, string[] args)
+        private Tuple<string, MessageTypeEnum> CommandAction(ICommand command, string[] args)
         {
-            bool status;
+			MessageTypeEnum status;
             string result = command.Execute(args, out status);
-            return new Tuple<string, bool>(result, status);
+            return new Tuple<string, MessageTypeEnum>(result, status);
         }
 	}
 }
