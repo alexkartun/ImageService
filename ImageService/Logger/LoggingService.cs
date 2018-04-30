@@ -3,6 +3,7 @@ using System;
 
 namespace ImageService.Logging
 {
+	//testing change
     public class LoggingService : ILoggingService
     {
         public event EventHandler<MessageRecievedEventArgs> MessageRecieved;
