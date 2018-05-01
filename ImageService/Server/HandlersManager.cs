@@ -8,14 +8,16 @@ using System;
 
 namespace ImageService.Server
 {
-	public class ImageServer
+
+	//TODO: interface.
+	public class HandlersManager
 	{
 		private IImageController m_controller;
 		private ILoggingService logging_service;
 
         public event EventHandler<CommandRecievedEventArgs> CommandRecieved;
 
-        public ImageServer(IImageController controller, ILoggingService logger)
+        public HandlersManager(IImageController controller, ILoggingService logger)
         {
             m_controller = controller;
             logging_service = logger;
@@ -35,11 +37,10 @@ namespace ImageService.Server
         /// </summary>
         /// <param name="sender"> Handler to be closed. </param>
         /// <param name="close_args"> Closing args of specific handler. </param>
-        private void OnCloseServer(object sender, DirectoryCloseEventArgs close_args)
+        private void OnCloseHandler(object sender, DirectoryCloseEventArgs close_args)
         {
-            IDirectoryHandler handler = (IDirectoryHandler) sender; // TODO: check for optimize down-casting.
+            IDirectoryHandler handler = (IDirectoryHandler) sender;
             CommandRecieved -= handler.OnCommandRecieved;
-			//TODO: check failiure possibility.
             logging_service.Log(close_args.Message + close_args.DirectoryPath, MessageTypeEnum.INFO);
         }
 
@@ -78,10 +79,16 @@ namespace ImageService.Server
             {
                 IDirectoryHandler handler = new DirectoryHandler(m_controller, logging_service, path);
                 CommandRecieved += handler.OnCommandRecieved;
-                handler.DirectoryClose += OnCloseServer;
+                handler.DirectoryClose += OnCloseHandler;
 				handler.DirectoryAction += MessageLogger;
 				handler.StartHandleDirectory();
             }
         }
+
+		public static CommandRecievedEventArgs ParseInput(string input)
+		{
+
+		}
+
     }
 }

@@ -14,11 +14,11 @@ namespace ImageService.Controller.Handlers
         /// Start handler specific directory.
         /// </summary>
 		void StartHandleDirectory();
-        /// <summary>
+        /*/// <summary>
         /// Handler asked to execute command by service/server.
         /// </summary>
         /// <param name="sender"> Server. </param>
         /// <param name="command_args"> Arguments for command to be executed. </param>
-        void OnCommandRecieved(object sender, CommandRecievedEventArgs command_args);
+        void OnCommandRecieved(object sender, CommandRecievedEventArgs command_args);*/
     }
 }

@@ -39,7 +39,7 @@ namespace ImageService
 	public partial class ImageService : ServiceBase
     {
 		private ILoggingService image_logger;
-        private ImageServer image_server;
+        private HandlersManager image_server;
 
 		public ImageService()
         {
@@ -77,7 +77,7 @@ namespace ImageService
             image_logger.MessageRecieved += OnMsg;
             IImageServiceModal image_modal = new ImageServiceModal(output_dir_path, int.Parse(thumbnail_size));
             IImageController controller = new ImageController(image_modal);
-            image_server = new ImageServer(controller, image_logger);
+            image_server = new HandlersManager(controller, image_logger);
             // Create handlers and start handling.
             image_server.CreateHandlers(directories);
 

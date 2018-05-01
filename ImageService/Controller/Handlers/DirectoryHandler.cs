@@ -53,11 +53,11 @@ namespace ImageService.Controller.Handlers
                 {
                     CloseHandler();
                 }
-                // Otherwise,
+                /*// Otherwise,
                 else
                 {
 					DoFileAction(command_args);
-				}
+				}*/
             }
         }
 
@@ -141,7 +141,7 @@ namespace ImageService.Controller.Handlers
             }
         }
 
-        /// <summary>
+        /*/// <summary>
         /// Execute the command via controller. Get status and result of the execution. And update the event logger via
         /// directory_action event that invoke server function for updating the logger.
         /// </summary>
@@ -155,7 +155,7 @@ namespace ImageService.Controller.Handlers
 			MessageRecievedEventArgs msg_args =
 					new MessageRecievedEventArgs(result, status);
 			DirectoryAction(this, msg_args);
-		}
+		}*/
 
         /// <summary>
         /// Static function for getting extenssion of the file that was created on the directory.
