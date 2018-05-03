@@ -12,11 +12,11 @@ namespace ImageService.Modal.Event
         public string[] Args { get; set; }
         public string RequestDirPath { get; set; }
 
-        public CommandRecievedEventArgs(int id, string[] args, string path)
+        public CommandRecievedEventArgs(int id, string path = null, string[] args = null)
         {
             CommandID = id;
-            Args = args;
             RequestDirPath = path;
+            Args = args;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ImageService.Logging.Modal;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace ImageService.Logging
         /// </summary>
         /// <param name="message"> Message to be written in event entry. </param>
         /// <param name="type"> Type of the message. </param>
+        /// <returns> Returns log. </returns>
         void Log(string message, MessageTypeEnum type);
     }
 }

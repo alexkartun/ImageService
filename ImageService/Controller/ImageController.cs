@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using ImageService.Infastructure.Enums;
 using System.Threading.Tasks;
 using ImageService.Logging.Modal;
+using System.Net.Sockets;
 
 namespace ImageService.Controller
 {
@@ -19,36 +20,17 @@ namespace ImageService.Controller
             commands = new Dictionary<int, ICommand>()
             {
                 // The only command in the map for now. New file command.
-                { (int) CommandEnum.NewFileCommand, new NewFileCommand(m_modal) }
+                { (int) CommandEnum.NewFileCommand, new NewFileCommand(m_modal) },
+                { (int) CommandEnum.CloseCommand, new CloseCommand(m_modal) },
+                { (int) CommandEnum.LogCommand, new LogCommand(m_modal) },
+                { (int) CommandEnum.GetConfigCommand, new ConfigCommand(m_modal) }
             };
         }
 
-		public string ExecuteCommand(int commandID, string[] args, out MessageTypeEnum status)
+		public string ExecuteCommand(int commandID, string[] args, out MessageTypeEnum status, TcpClient client = null)
 		{
 			ICommand command = commands[commandID];
-            // Create task for every command that we want to execute. 
-            Task<Tuple<string, MessageTypeEnum>> task = Task.Run(() => 
-                { return CommandAction(command, args); });
-            // Father wait for son to finish and get the result after execution.
-            task.Wait();
-            // Update the values and return.
-            var value = task.Result;
-            status = value.Item2;
-			return value.Item1;
-        }
-
-        /// <summary>
-        /// Command executed after task/thread created.
-        /// </summary>
-        /// <param name="command"> Command to execute. </param>
-        /// <param name="args"> Arguments of the command. </param>
-        /// <returns> Return tuple type including 2 items: string representation and bollean status of execution. 
-        /// </returns>
-        private Tuple<string, MessageTypeEnum> CommandAction(ICommand command, string[] args)
-        {
-			MessageTypeEnum status;
-            string result = command.Execute(args, out status);
-            return new Tuple<string, MessageTypeEnum>(result, status);
+            return command.Execute(args, out status, client);
         }
 	}
 }

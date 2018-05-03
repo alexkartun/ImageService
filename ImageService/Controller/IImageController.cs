@@ -1,4 +1,5 @@
 ﻿using ImageService.Logging.Modal;
+using System.Net.Sockets;
 
 namespace ImageService.Controller
 {
@@ -11,7 +12,7 @@ namespace ImageService.Controller
         /// <param name="args"> Arguments of the command. </param>
         /// <param name="result"> Result of the execution. </param>
         /// <returns> Return string representation of of succession or failure. </returns>
-        string ExecuteCommand(int commandID, string[] args, out MessageTypeEnum result);
+        string ExecuteCommand(int commandID, string[] args, out MessageTypeEnum result, TcpClient client = null);
     }
 }
 

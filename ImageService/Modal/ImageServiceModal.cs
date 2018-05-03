@@ -5,6 +5,9 @@ using System.Text.RegularExpressions;
 using System.Drawing.Imaging;
 using System.Text;
 using ImageService.Logging.Modal;
+using ImageService.Infastructure.Enums;
+using System.Configuration;
+using System.Net.Sockets;
 
 namespace ImageService.Modal
 {
@@ -33,12 +36,6 @@ namespace ImageService.Modal
 			bool flag_nameChanged = false, flag_noTakenTime = false;
 			string returnedMsg = "";
 			result = MessageTypeEnum.INFO;
-			// args length should be 2.
-			if (args.Length != 2)
-			{
-				result = MessageTypeEnum.FAIL;
-				return "2 Args must be given to Addfile()";
-			}
 			string fullPath = args[0];
 			string fileName = args[1];
 			try
@@ -140,6 +137,29 @@ namespace ImageService.Modal
 			}
 			return File.GetCreationTime(path);
 		}
-	}
+
+        public string CloseDirectory(string[] args, out MessageTypeEnum result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetConfig(out MessageTypeEnum result, TcpClient client = null)
+        {
+            result = MessageTypeEnum.INFO;
+            string output = CommandEnum.GetConfigCommand.ToString() + " ";
+            string output_directory = ConfigurationManager.AppSettings["OutputDir"] + " ";
+            string source_name = ConfigurationManager.AppSettings["SourceName"] + " ";
+            string log_name = ConfigurationManager.AppSettings["LogName"] + " ";
+            string thumbnail_size = ConfigurationManager.AppSettings["ThumbnailSize"] + " ";
+            output += output_directory + source_name + log_name + thumbnail_size;
+            //TODO: Directories.
+            return output;
+        }
+
+        public string GetAllLog(out MessageTypeEnum result, TcpClient client = null)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
 

@@ -5,12 +5,10 @@ namespace ImageService.Modal.Event
     public class DirectoryCloseEventArgs : EventArgs
     {
         public string DirectoryPath { get; set; }
-        public string Message { get; set; }
 
-        public DirectoryCloseEventArgs(string dirPath, string message)
+        public DirectoryCloseEventArgs(string dirPath)
         {
             DirectoryPath = dirPath;
-            Message = message;
         }
     }
 }

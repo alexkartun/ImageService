@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using ImageService.Logging.Modal;
@@ -16,5 +17,8 @@ namespace ImageService.Modal
         /// <param name="result"> Result of success or failure. </param>
         /// <returns> Return exception message if was throwed or success message. </returns>
         string AddFile(string[] args, out MessageTypeEnum result);
+        string CloseDirectory(string[] args, out MessageTypeEnum result);
+        string GetConfig(out MessageTypeEnum result, TcpClient client = null);
+        string GetAllLog(out MessageTypeEnum result, TcpClient client = null);
     }
 }
