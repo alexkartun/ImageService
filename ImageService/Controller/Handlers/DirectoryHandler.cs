@@ -15,8 +15,6 @@ namespace ImageService.Controller.Handlers
         private IImageController m_controller;
         private FileSystemWatcher m_dirWatcher;
         public String Path { get; set; }
-
-        public event EventHandler<DirectoryCloseEventArgs> DirectoryClose;
         public event EventHandler<MessageRecievedEventArgs> MessageLogger;
 
         public DirectoryHandler(string path, IImageController controller)
@@ -49,15 +47,10 @@ namespace ImageService.Controller.Handlers
 
         public void StartHandleDirectory()
         {
-            string msg = "Start handling directory: " + Path;
             // lookup for all extensions. - Filter in OnChanged() method.
             m_dirWatcher.Filter = "*.*";
             m_dirWatcher.Created += new FileSystemEventHandler(OnChanged);
             m_dirWatcher.EnableRaisingEvents = true;
-            // Update logger about starting handling.
-            MessageRecievedEventArgs msg_args =
-                    new MessageRecievedEventArgs(msg, MessageTypeEnum.INFO);
-            MessageLogger(this, msg_args);
         }
 
         /// <summary>
@@ -111,11 +104,7 @@ namespace ImageService.Controller.Handlers
 
         public void StopHandleDirectory()
         {
-            string msg = "Closing directory successfully: " + Path;
             m_dirWatcher.EnableRaisingEvents = false;
-            MessageRecievedEventArgs msg_args =
-                    new MessageRecievedEventArgs(msg, MessageTypeEnum.INFO);
-            MessageLogger(this, msg_args);
         }
     }
 }

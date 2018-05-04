@@ -8,6 +8,9 @@ using ImageService.Logging.Modal;
 using ImageService.Infastructure.Enums;
 using System.Configuration;
 using System.Net.Sockets;
+using ImageService.Modal.Event;
+using System.Diagnostics;
+using ImageService.Logging;
 
 namespace ImageService.Modal
 {
@@ -17,7 +20,10 @@ namespace ImageService.Modal
 		private string m_ThumbnailFolder;
 		private int m_thumbnailSize;
 
-		public ImageServiceModal(string output_folder, int thumbnail_size)
+        public event EventHandler<LogEventArgs> LogRecieved;
+        public event EventHandler<DirectoryCloseEventArgs> CloseResieved;
+
+        public ImageServiceModal(string output_folder, int thumbnail_size)
 		{
 			// Creates output file on construction.
 			m_OutputFolder = Path.Combine(output_folder, "OutputDir");
@@ -33,8 +39,6 @@ namespace ImageService.Modal
 		/// </summary>
 		public string AddFile(string[] args, out MessageTypeEnum result)
 		{
-			bool flag_nameChanged = false, flag_noTakenTime = false;
-			string returnedMsg = "";
 			result = MessageTypeEnum.INFO;
 			string fullPath = args[0];
 			string fileName = args[1];
@@ -48,38 +52,25 @@ namespace ImageService.Modal
 					// Create thumbnail folder.
 					Directory.CreateDirectory(m_ThumbnailFolder);
 				}
-				DateTime creation = GetDateTakenFromImage(fullPath, ref flag_noTakenTime);
+				DateTime creation = GetDateTakenFromImage(fullPath, ref result);
 				string picPathDir = CreateDateDirectory(m_OutputFolder, creation);
 				string thumbnailPathDir = CreateDateDirectory(m_ThumbnailFolder, creation);
 				string destFilePath = Path.Combine(picPathDir, fileName);
 				// Exists a picture with same name. Renaming current pic.
 				while (File.Exists(destFilePath))
 				{
-					flag_nameChanged = true;
-					fileName = "cpy_" + fileName;
+                    result = MessageTypeEnum.WARNING;
+                    fileName = "cpy_" + fileName;
 					destFilePath = Path.Combine(picPathDir, fileName);
 				}
 				File.Move(fullPath, destFilePath);
 				CreateThumbnail(destFilePath, thumbnailPathDir, fileName);
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				result = MessageTypeEnum.FAIL;
-				return "Error occured moving picture: " + fileName + ". Details: " + e.Data.ToString();
 			}
-			if (flag_nameChanged)
-			{
-				result = MessageTypeEnum.WARNING;
-				returnedMsg += "Warning name changed.\n";
-			}
-			if (flag_noTakenTime)
-			{
-				result = MessageTypeEnum.WARNING;
-				returnedMsg += "Warning no taken time property. Used creation time instead.\n";
-			}
-			returnedMsg += "File added successfully. Picture name: " + fileName;
-
-			return returnedMsg;
+            return "Got command ID: " + ((int) CommandEnum.NewFileCommand).ToString() + " Args: " + args[0] + ", " + args[1];
 		}
 
 		/// <summary>
@@ -120,7 +111,7 @@ namespace ImageService.Modal
 		/// <param name="path"> Image path. </param>
 		/// <param name="warning_flag"> Indicates if taken date exists. </param>
 		/// <returns> Return the day given photo was taken. </returns>
-		public static DateTime GetDateTakenFromImage(string path, ref bool warning_flag)
+		public static DateTime GetDateTakenFromImage(string path, ref MessageTypeEnum status)
 		{
 			try
 			{
@@ -133,32 +124,63 @@ namespace ImageService.Modal
 				}
 			}
 			catch (Exception) {
-				warning_flag = true;
+                status = MessageTypeEnum.WARNING;
 			}
 			return File.GetCreationTime(path);
 		}
 
         public string CloseDirectory(string[] args, out MessageTypeEnum result)
         {
-            throw new NotImplementedException();
+            result = MessageTypeEnum.INFO;
+            CloseResieved(this, new DirectoryCloseEventArgs(args[0]));
+            return "Got command ID: " + ((int)CommandEnum.CloseCommand).ToString() + " Args: " + args[0];
         }
 
         public string GetConfig(out MessageTypeEnum result, TcpClient client = null)
         {
             result = MessageTypeEnum.INFO;
-            string output = CommandEnum.GetConfigCommand.ToString() + " ";
+            string output = "";
             string output_directory = ConfigurationManager.AppSettings["OutputDir"] + " ";
             string source_name = ConfigurationManager.AppSettings["SourceName"] + " ";
             string log_name = ConfigurationManager.AppSettings["LogName"] + " ";
             string thumbnail_size = ConfigurationManager.AppSettings["ThumbnailSize"] + " ";
             output += output_directory + source_name + log_name + thumbnail_size;
             //TODO: Directories.
-            return output;
+            using (NetworkStream stream = client.GetStream())
+            using (StreamWriter writer = new StreamWriter(stream))
+            {
+                writer.WriteLine(output);
+            }
+            return "Got command ID: " + ((int) CommandEnum.GetConfigCommand).ToString() + " Args:";
         }
 
         public string GetAllLog(out MessageTypeEnum result, TcpClient client = null)
         {
-            throw new NotImplementedException();
+            result = MessageTypeEnum.INFO;
+            LogRecieved(this, new LogEventArgs(client));
+            return "Got command ID: " + ((int) CommandEnum.LogCommand).ToString() + " Args:";
+        }
+
+        public void SendLogsToClient(TcpClient client, EventLogEntryCollection entries)
+        {
+            string output = "";
+            foreach(EventLogEntry entry in entries)
+            {
+                output += "Message: " + entry.Message + " Type: " + 
+                    ((int)ConvertEventLogEntryToStat(entry.EntryType)).ToString() + ", ";
+            }
+            using (NetworkStream stream = client.GetStream())
+            using (StreamWriter writer = new StreamWriter(stream))
+            {
+                writer.WriteLine(output);
+            }
+        }
+        
+        private static MessageTypeEnum ConvertEventLogEntryToStat(EventLogEntryType status)
+        {
+            if (status == EventLogEntryType.Information) return MessageTypeEnum.INFO;
+            else if (status == EventLogEntryType.Warning) return MessageTypeEnum.WARNING;
+            else return MessageTypeEnum.FAIL;
         }
     }
 }

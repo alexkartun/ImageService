@@ -9,8 +9,6 @@ namespace ImageService.Controller.Handlers
     {
         string Path { get; set; }
         event EventHandler<MessageRecievedEventArgs> MessageLogger;
-        // Event for closing the handler.
-        event EventHandler<DirectoryCloseEventArgs> DirectoryClose;
         /// <summary>
         /// Start handler specific directory.
         /// </summary>

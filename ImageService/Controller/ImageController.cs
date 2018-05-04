@@ -11,19 +11,19 @@ namespace ImageService.Controller
 {
     public class ImageController : IImageController
     {
-        private IImageServiceModal m_modal;
+        public IImageServiceModal ImageModal { get; set; }
         private Dictionary<int, ICommand> commands;
 
 		public ImageController(IImageServiceModal modal)
         {
-            m_modal = modal;
+            ImageModal = modal;
             commands = new Dictionary<int, ICommand>()
             {
                 // The only command in the map for now. New file command.
-                { (int) CommandEnum.NewFileCommand, new NewFileCommand(m_modal) },
-                { (int) CommandEnum.CloseCommand, new CloseCommand(m_modal) },
-                { (int) CommandEnum.LogCommand, new LogCommand(m_modal) },
-                { (int) CommandEnum.GetConfigCommand, new ConfigCommand(m_modal) }
+                { (int) CommandEnum.NewFileCommand, new NewFileCommand(ImageModal) },
+                { (int) CommandEnum.CloseCommand, new CloseCommand(ImageModal) },
+                { (int) CommandEnum.LogCommand, new LogCommand(ImageModal) },
+                { (int) CommandEnum.GetConfigCommand, new ConfigCommand(ImageModal) }
             };
         }
 

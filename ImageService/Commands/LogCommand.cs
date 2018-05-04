@@ -17,8 +17,7 @@ namespace ImageService.Commands
         {
             m_modal = modal;
         }
-
-        
+     
         public string Execute(string[] args, out MessageTypeEnum result, TcpClient client = null)
         {
             return m_modal.GetAllLog(out result, client);

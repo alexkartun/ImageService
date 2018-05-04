@@ -5,6 +5,7 @@ using ImageService.Logging;
 using ImageService.Logging.Modal;
 using ImageService.Modal;
 using ImageService.Modal.Event;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -23,7 +24,7 @@ namespace ImageService.Server
     {
         private string ip;
         private string port;
-        private TcpListener listener;
+        private TcpListener server;
         private List<TcpClient> clients;
         private ILoggingService logging_service;
         private IImageController image_controller;
@@ -46,18 +47,16 @@ namespace ImageService.Server
         {
             CreateHandlers();
             IPEndPoint ep = new IPEndPoint(IPAddress.Parse(ip), int.Parse(port));
-            listener = new TcpListener(ep);
-            listener.Start();
-            logging_service.Log("Waiting for client connections...", MessageTypeEnum.INFO);
+            server = new TcpListener(ep);
             Task task = new Task(() =>
             {
+                server.Start();
                 while (true)
                 {
                     try
                     {
-                        TcpClient client = listener.AcceptTcpClient();
+                        TcpClient client = server.AcceptTcpClient();
                         clients.Add(client);
-                        logging_service.Log("Got new connection", MessageTypeEnum.INFO);
                         HandleClient(client);
                     }
                     catch (SocketException)
@@ -78,30 +77,25 @@ namespace ImageService.Server
                 using (StreamReader reader = new StreamReader(stream))
                 using (StreamWriter writer = new StreamWriter(stream))
                 {
-                    try
+                    writer.AutoFlush = true;
+                    while (true)
                     {
-                        while (true)
-                        {
-                            string commandLine = reader.ReadLine();
-                            SendCommand(commandLine, client);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        logging_service.Log("Exception occured when writing/reading to/from socket.", MessageTypeEnum.FAIL);
+                        string commandLine = reader.ReadLine();
+                        CommandRecievedEventArgs cmd = JsonConvert.DeserializeObject<CommandRecievedEventArgs>(commandLine);
+                        string output = image_controller.ExecuteCommand(cmd.CommandID, cmd.Args,
+                            out MessageTypeEnum status, client);
+                        logging_service.Log(output, status);
                     }
                 }
-                client.Close();
-                clients.Remove(client);
-                logging_service.Log("Closing connection to client..", MessageTypeEnum.INFO);
+                //client.Close();
+                //clients.Remove(client);
             }).Start();
         }
 
         public void Stop()
         {
-            logging_service.Log("Stopping for client connections...", MessageTypeEnum.INFO);
             StopHandlers();
-            listener.Stop();
+            server.Stop();
         }
 
         /// <summary>
@@ -115,28 +109,21 @@ namespace ImageService.Server
         }
 
         /// <summary>
-        /// Send command to handlers.
-        /// </summary>
-        /// <param name="command_args"> Command args for execution of the command. </param>
-        private void SendCommand(string command_line, TcpClient client)
-        {
-            //CommandRecieved(this, command_args);
-            string[] arr = command_line.Split(' ');
-            string commandKey = arr[0];
-            string[] args = arr.Skip(1).ToArray();
-            string output = image_controller.ExecuteCommand(int.Parse(commandKey), args, out MessageTypeEnum status, client);
-            logging_service.Log(output, status);
-        }
-
-        /// <summary>
         /// Close sender handler. Remove from events.
         /// </summary>
         /// <param name="sender"> Handler to be closed. </param>
         /// <param name="close_args"> Closing args of specific handler. </param>
         private void OnCloseHandler(object sender, DirectoryCloseEventArgs close_args)
         {
-            IDirectoryHandler handler = (IDirectoryHandler)sender;
-            directory_handlers.Remove(handler);
+            foreach (IDirectoryHandler dir in directory_handlers)
+            {
+                if (dir.Path.CompareTo(close_args.DirectoryPath) == 0)
+                {
+                    dir.StopHandleDirectory();
+                    break;
+                }
+            }
+            directory_handlers.RemoveAll(dir => dir.Path == close_args.DirectoryPath);
         }
 
         /// <summary>
@@ -157,13 +144,15 @@ namespace ImageService.Server
         /// </summary>
         private void CreateHandlers()
         {
+            // Bind event for closing directory from image modal.
+            image_controller.ImageModal.CloseResieved += OnCloseHandler;
+
             string directories = ConfigurationManager.AppSettings["Handler"];
             string[] paths = directories.Split(';');
             foreach (string path in paths)
             {
                 IDirectoryHandler handler = new DirectoryHandler(path, image_controller);
                 directory_handlers.Add(handler);
-                handler.DirectoryClose += OnCloseHandler;
                 handler.MessageLogger += OnMessageRecieved;
                 handler.StartHandleDirectory();
             }

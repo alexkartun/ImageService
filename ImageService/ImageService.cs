@@ -12,6 +12,7 @@ using ImageService.Logging.Modal;
 using ImageService.Modal;
 using ImageService.Controller;
 using ImageService.Infastructure.Enums;
+using ImageService.Modal.Event;
 
 namespace ImageService
 {
@@ -58,16 +59,23 @@ namespace ImageService
             };
             image_logger = new LoggingService();
             image_logger.MessageRecieved += OnMsg;
-            IImageController controller = new ImageController(new ImageServiceModal(output_dir_path, int.Parse(thumbnail_size)));
+            IImageServiceModal image_modal = new ImageServiceModal(output_dir_path, int.Parse(thumbnail_size));
+            image_modal.LogRecieved += OnLogRecieved;
+            IImageController controller = new ImageController(image_modal);
             image_server = new ImageServer(ip, port, image_logger, controller);
 		}
 
-		[DllImport("advapi32.dll", SetLastError = true)]
+        private void OnLogRecieved(object sender, LogEventArgs log_args)
+        {
+            IImageServiceModal modal = (IImageServiceModal) sender;
+            modal.SendLogsToClient(log_args.CLIENT, eventLogger.Entries);
+        }
+
+        [DllImport("advapi32.dll", SetLastError = true)]
 		private static extern bool SetServiceStatus(IntPtr handle, ref ServiceStatus serviceStatus);
 
 		protected override void OnStart(string[] args)
         {
-            eventLogger.WriteEntry("OnStart");
             // Update the service state to Start Pending.  
             ServiceStatus serviceStatus = new ServiceStatus
 			{
@@ -85,7 +93,6 @@ namespace ImageService
 
         protected override void OnStop()
         {
-            eventLogger.WriteEntry("OnStop");
             ServiceStatus serviceStatus = new ServiceStatus
 			{
 				dwCurrentState = ServiceState.SERVICE_STOP_PENDING,

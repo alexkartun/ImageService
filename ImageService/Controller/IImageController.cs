@@ -1,10 +1,12 @@
 ﻿using ImageService.Logging.Modal;
+using ImageService.Modal;
 using System.Net.Sockets;
 
 namespace ImageService.Controller
 {
     public interface IImageController
     {
+        IImageServiceModal ImageModal { get; set; }
         /// <summary>
         /// Get the command from the map via commandID. Execute command.
         /// </summary>
