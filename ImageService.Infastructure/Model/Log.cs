@@ -1,5 +1,4 @@
-﻿using ImageService.Logging.Modal;
-using System.Diagnostics;
+﻿using ImageService.Logging.Model;
 
 namespace ImageService.Infastructure.Model
 {

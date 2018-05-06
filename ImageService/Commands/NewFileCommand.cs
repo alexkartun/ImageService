@@ -1,5 +1,5 @@
-﻿using ImageService.Logging.Modal;
-using ImageService.Modal;
+﻿using ImageService.Logging.Model;
+using ImageService.Model;
 using System.Net.Sockets;
 
 namespace ImageService.Commands
@@ -16,7 +16,7 @@ namespace ImageService.Commands
         /// <summary>
         /// New file command execution. Add file called.
         /// </summary>
-        public string Execute(string[] args, out MessageTypeEnum result)
+        public string Execute(string[] args, out MessageTypeEnum result, TcpClient client = null)
         {
             return m_modal.AddFile(args, out result);
         }

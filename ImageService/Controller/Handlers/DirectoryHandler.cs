@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
 using ImageService.Infastructure.Enums;
-using ImageService.Infastructure.Modal;
+using ImageService.Infastructure.Model;
 using ImageService.Logging;
-using ImageService.Logging.Modal;
-using ImageService.Modal.Event;
+using ImageService.Logging.Model;
 
 namespace ImageService.Controller.Handlers
 {
@@ -46,9 +45,11 @@ namespace ImageService.Controller.Handlers
                 || strFileExt.CompareTo(".gif") == 0 || strFileExt.CompareTo(".bmp") == 0)
             {
                 string[] args = { e.FullPath, e.Name };
-				CommandRecievedEventArgs cmd_args = new CommandRecievedEventArgs
-					((int) CommandEnum.NewFileCommand, e.FullPath, args);
-				DoFileAction(cmd_args);
+                string result = m_controller.ExecuteCommand((int)CommandEnum.NewFileCommand,
+                    args, out MessageTypeEnum status);
+                // Update logger with the result.
+                m_logger.Log(result, status);
+                m_controller.LogsModal.ServiceLogs.Add(new Log(result, status));
             }
         }
 
@@ -64,19 +65,6 @@ namespace ImageService.Controller.Handlers
             if (filePath.LastIndexOf(".") == -1) return "";
             return filePath.Substring(filePath.LastIndexOf("."));
         }
-        /// <summary>
-        /// Execute the command via controller. Get status and result of the execution. And update the event logger via
-        /// directory_action event that invoke server function for updating the logger.
-        /// </summary>
-        /// <param name="args"> Arguments of command. </param>
-		private void DoFileAction(CommandRecievedEventArgs args)
-		{
-			MessageTypeEnum status;
-			string result = m_controller.ExecuteCommand(args.CommandID,
-				args.Args, out status);
-            m_logger.Log(result, status);
-            m_controller.LogsModal.ServiceLogs.Add(new Log(result, status));
-		}
 
         public void StopHandleDirectory()
         {

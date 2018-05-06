@@ -4,15 +4,8 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Drawing.Imaging;
 using System.Text;
-using ImageService.Logging.Modal;
 using ImageService.Infastructure.Enums;
-using System.Configuration;
-using System.Net.Sockets;
-using ImageService.Modal.Event;
-using System.Diagnostics;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using ImageService.Infastructure.Modal;
+using ImageService.Logging.Model;
 
 namespace ImageService.Model
 {
@@ -127,13 +120,6 @@ namespace ImageService.Model
 			}
 			return File.GetCreationTime(path);
 		}
-
-        public string CloseDirectory(string[] args, out MessageTypeEnum result)
-        {
-            result = MessageTypeEnum.INFO;
-            //CloseResieved(this, new DirectoryCloseEventArgs(args[0]));
-            return "Got command ID: " + ((int) CommandEnum.CloseCommand).ToString() + " Args: " + args[0];
-        }
     }
 }
 

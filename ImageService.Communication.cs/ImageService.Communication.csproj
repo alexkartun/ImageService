@@ -51,5 +51,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ImageService.Infastructure\ImageService.Infastructure.csproj">
+      <Project>{C6D157CD-B2BF-48E1-80DF-48C770347F66}</Project>
+      <Name>ImageService.Infastructure</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

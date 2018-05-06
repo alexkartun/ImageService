@@ -1,9 +1,4 @@
-﻿using ImageService.Logging.Modal;
-using ImageService.Modal.Event;
-using System;
-using System.Net.Sockets;
-
-namespace ImageService.Controller.Handlers
+﻿namespace ImageService.Controller.Handlers
 {
     public interface IDirectoryHandler
     {

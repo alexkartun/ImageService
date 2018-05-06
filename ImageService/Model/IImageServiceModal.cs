@@ -1,4 +1,4 @@
-﻿using ImageService.Logging.Modal;
+﻿using ImageService.Logging.Model;
 
 namespace ImageService.Model
 {
@@ -11,6 +11,5 @@ namespace ImageService.Model
         /// <param name="result"> Result of success or failure. </param>
         /// <returns> Return exception message if was throwed or success message. </returns>
         string AddFile(string[] args, out MessageTypeEnum result);
-        string CloseDirectory(string[] args, out MessageTypeEnum result);
     }
 }

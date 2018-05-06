@@ -1,11 +1,6 @@
-﻿using ImageService.Logging.Modal;
-using ImageService.Modal;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using ImageService.Logging.Model;
+using ImageService.Model;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ImageService.Commands
 {
@@ -18,9 +13,10 @@ namespace ImageService.Commands
             m_modal = modal;
         }
 
-        public string Execute(string[] args, out MessageTypeEnum result)
+        public string Execute(string[] args, out MessageTypeEnum result, TcpClient client = null)
         {
-            return m_modal.CloseDirectory(args, out result);
+            result = MessageTypeEnum.INFO;
+            return "";
         }
     }
 }

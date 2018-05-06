@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using ImageService.Logging.Model;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using ImageService.Logging.Modal;
 
 namespace ImageService.Commands
 {
@@ -18,6 +13,6 @@ namespace ImageService.Commands
         /// <returns> 
         /// Return string representation of execution, including exception data if throwed during the process.
         /// </returns>
-        string Execute(string[] args, out MessageTypeEnum result);
+        string Execute(string[] args, out MessageTypeEnum result, TcpClient client = null);
     }
 }

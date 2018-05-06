@@ -1,7 +1,5 @@
-﻿using ImageService.Logging.Modal;
+﻿using ImageService.Logging.Model;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace ImageService.Logging
 {

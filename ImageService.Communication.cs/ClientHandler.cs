@@ -1,4 +1,5 @@
 ﻿using ImageService.Communication.Model;
+using ImageService.Infastructure.Event;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,29 +13,21 @@ namespace ImageService.Communication
 {
     public class ClientHandler
     {
+        public event EventHandler<CommandRecievedEventArgs> CommandRecieved;
         public void HandleClient(TcpClient client)
         {
             new Task(() =>
             {
                 using (NetworkStream stream = client.GetStream())
                 using (StreamReader reader = new StreamReader(stream))
-                using (StreamWriter writer = new StreamWriter(stream))
                 {
-                    writer.AutoFlush = true;
                     while (true)
                     {
                         string commandLine = reader.ReadLine();
                         CommandMessage cmd = JsonConvert.DeserializeObject<CommandMessage>(commandLine);
-                        string output = image_controller.ExecuteCommand(cmd.Command, cmd.Args,
-                            out MessageTypeEnum status);
-                        writer.WriteLine(output);
-                        // logging_service.Log(output, status);
-                        // Add new log to logs modal.
-                        // image_controller.LogsModal.ServiceLogs.Add(new Log(output, status));
+                        CommandRecieved(this, new CommandRecievedEventArgs(cmd.Command, cmd.Args, client));
                     }
                 }
-                //client.Close();
-                //clients.Remove(client);
             }).Start();
         }
     }

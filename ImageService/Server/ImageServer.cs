@@ -1,7 +1,9 @@
 ﻿using ImageService.Communication;
 using ImageService.Controller;
 using ImageService.Controller.Handlers;
+using ImageService.Infastructure.Event;
 using ImageService.Logging;
+using ImageService.Logging.Model;
 using ImageService.Model.Event;
 using System.Collections.Generic;
 using System.Configuration;
@@ -17,15 +19,23 @@ namespace ImageService.Server
 
         public ImageServer(string ip, string port, ILoggingService logger, IImageController controller)
         {
-            server = new TcpServerChannel(ip, port, controller);
+            server = new TcpServerChannel(ip, port);
             image_controller = controller;
             logging_service = logger;
             directory_handlers = new List<IDirectoryHandler>();
         }
 
+        private void OnCommandRecieved(object sender, CommandRecievedEventArgs args)
+        {
+            string output = image_controller.ExecuteCommand(args.Command, args.Args, out MessageTypeEnum status,
+                args.Client_Socket);
+        }
+
         public void Start()
         {
             CreateHandlers();
+            // Bind event to handler client component.
+            server.Client_Handler.CommandRecieved += OnCommandRecieved;
             server.Start();
         }
 
@@ -82,6 +92,7 @@ namespace ImageService.Server
                 IDirectoryHandler handler = new DirectoryHandler(path, image_controller, logging_service);
                 directory_handlers.Add(handler);
                 handler.StartHandleDirectory();
+                image_controller.SettingsModal.ServiceConfig.Directory_Paths.Add(path);
             }
         }
     }

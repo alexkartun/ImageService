@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using ImageService.Communication.Model;
+using ImageService.Infastructure.Event;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -11,15 +15,27 @@ namespace ImageService.Communication
         private string port;
         private TcpListener server;
         private List<TcpClient> clients;
-        private ClientHandler ch;
-        private IImageController controller;
+        public ClientHandler Client_Handler { get; }
 
-        public TcpServerChannel(string ip, string port, IImageController controller)
+        public TcpServerChannel(string ip, string port)
         {
             this.ip = ip;
             this.port = port;
             clients = new List<TcpClient>();
-            ch = new ClientHandler();
+            Client_Handler = new ClientHandler();
+        }
+
+        public void SendCommandBroadCast(CommandMessage msg)
+        {
+            string output = JsonConvert.SerializeObject(msg);
+            foreach (TcpClient client in clients)
+            {
+                using (NetworkStream stream = client.GetStream())
+                using (StreamWriter writer = new StreamWriter(stream))
+                {
+                    writer.Write(output);
+                }
+            }
         }
 
         public void Start()
@@ -35,7 +51,7 @@ namespace ImageService.Communication
                     {
                         TcpClient client = server.AcceptTcpClient();
                         clients.Add(client);
-                        ch.HandleClient(client);
+                        Client_Handler.HandleClient(client);
                     }
                     catch (SocketException)
                     {
