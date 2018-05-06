@@ -11,16 +11,16 @@ namespace ImageService.Commands
 {
     class ConfigCommand : ICommand
     {
-        private IImageServiceModal m_modal;
+        private ISettingsModal m_modal;
 
-        public ConfigCommand(IImageServiceModal modal)
+        public ConfigCommand(ISettingsModal modal)
         {
             m_modal = modal;
         }
 
-        public string Execute(string[] args, out MessageTypeEnum result, TcpClient client = null)
+        public string Execute(string[] args, out MessageTypeEnum result)
         {
-            return m_modal.GetConfig(out result, client);
+            return m_modal.GetConfig(out result);
         }
     }
 }

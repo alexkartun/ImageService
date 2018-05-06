@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using ImageService.Infastructure.Modal;
+using ImageService.Infastructure.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,20 +22,37 @@ namespace Client
 
             NetworkStream stream = client.GetStream();
             StreamReader reader = new StreamReader(stream);
-            StreamWriter writer = new StreamWriter(stream)
+            StreamWriter writer = new StreamWriter(stream);
+            writer.AutoFlush = true;
+                CommandRecievedEventArgs cmd = new CommandRecievedEventArgs(2);
+                string output = JsonConvert.SerializeObject(cmd);
+                writer.WriteLine(output);
+                string input = reader.ReadLine();
+                Config cfg = JsonConvert.DeserializeObject<Config>(input);
+                Console.WriteLine(cfg.Log_Name);
+                Console.WriteLine(cfg.Output_Directory);
+                Console.WriteLine(cfg.Source_Name);
+                Console.WriteLine(cfg.Thumbnail_Size);
+                foreach (string dir in cfg.Directory_Paths)
+                {
+                    Console.WriteLine(dir);
+                }
+            
+            CommandRecievedEventArgs c = new CommandRecievedEventArgs(3);
+            output = JsonConvert.SerializeObject(c);
+            writer.WriteLine(output);
+            input = reader.ReadLine();
+
+
+            List<Log> logs = JsonConvert.DeserializeObject<List<Log>>(input);
+            foreach (Log log in logs)
             {
-                AutoFlush = true
-            };
-            CommandRecievedEventArgs cmd = new CommandRecievedEventArgs(3);
-            string output = JsonConvert.SerializeObject(cmd);
-            writer.WriteLine(output);
-            Console.WriteLine(output);
-            Console.WriteLine("{0}", reader.ReadLine());
-            cmd.CommandID = 2;
-            output = JsonConvert.SerializeObject(cmd);
-            Console.WriteLine(output);
-            writer.WriteLine(output);
-            Console.WriteLine("{0}", reader.ReadLine());
+                Console.WriteLine(log.Message);
+                Console.WriteLine((int)log.Status);
+            }
+            
+
         }
+
     }
 }

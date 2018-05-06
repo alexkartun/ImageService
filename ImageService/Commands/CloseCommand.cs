@@ -18,7 +18,7 @@ namespace ImageService.Commands
             m_modal = modal;
         }
 
-        public string Execute(string[] args, out MessageTypeEnum result, TcpClient client = null)
+        public string Execute(string[] args, out MessageTypeEnum result)
         {
             return m_modal.CloseDirectory(args, out result);
         }

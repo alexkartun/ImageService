@@ -11,16 +11,16 @@ namespace ImageService.Commands
 {
     class LogCommand : ICommand
     {
-        private IImageServiceModal m_modal;
+        private ILogsServiceModal m_modal;
 
-        public LogCommand(IImageServiceModal modal)
+        public LogCommand(ILogsServiceModal modal)
         {
             m_modal = modal;
         }
      
-        public string Execute(string[] args, out MessageTypeEnum result, TcpClient client = null)
+        public string Execute(string[] args, out MessageTypeEnum result)
         {
-            return m_modal.GetAllLog(out result, client);
+            return m_modal.GetAllLog(out result);
         }
     }
 }

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Configuration;
 using System.IO;
-using System.Net.Sockets;
 using ImageService.Infastructure.Enums;
+using ImageService.Infastructure.Modal;
 using ImageService.Logging;
 using ImageService.Logging.Modal;
-using ImageService.Modal;
 using ImageService.Modal.Event;
 
 namespace ImageService.Controller.Handlers
@@ -13,37 +11,17 @@ namespace ImageService.Controller.Handlers
     class DirectoryHandler : IDirectoryHandler
     {
         private IImageController m_controller;
+        private ILoggingService m_logger;
         private FileSystemWatcher m_dirWatcher;
         public String Path { get; set; }
-        public event EventHandler<MessageRecievedEventArgs> MessageLogger;
 
-        public DirectoryHandler(string path, IImageController controller)
+        public DirectoryHandler(string path, IImageController controller, ILoggingService logger)
         {
             Path = path;
             m_controller = controller;
+            m_logger = logger;
             m_dirWatcher = new FileSystemWatcher(Path);
         }
-
-        /*
-        public void OnCommandRecieved(object sender, CommandRecievedEventArgs command_args)
-        {
-            // Checks if handler's path is similar to one that was passed.
-            if (command_args.RequestDirPath.CompareTo(Path) == 0)
-            {
-                // Close_command.
-                if (command_args.CommandID == (int) CommandEnum.CloseCommand)
-                {
-                    StopHandleDirectory();
-                    DirectoryClose(this, new DirectoryCloseEventArgs(Path));
-                }
-                // Otherwise,
-                else
-                {
-					DoFileAction(command_args);
-				}
-            }
-        }
-        */
 
         public void StartHandleDirectory()
         {
@@ -96,10 +74,8 @@ namespace ImageService.Controller.Handlers
 			MessageTypeEnum status;
 			string result = m_controller.ExecuteCommand(args.CommandID,
 				args.Args, out status);
-
-			MessageRecievedEventArgs msg_args =
-					new MessageRecievedEventArgs(result, status);
-			MessageLogger(this, msg_args);
+            m_logger.Log(result, status);
+            m_controller.LogsModal.ServiceLogs.Add(new Log(result, status));
 		}
 
         public void StopHandleDirectory()

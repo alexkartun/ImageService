@@ -18,6 +18,6 @@ namespace ImageService.Commands
         /// <returns> 
         /// Return string representation of execution, including exception data if throwed during the process.
         /// </returns>
-        string Execute(string[] args, out MessageTypeEnum result, TcpClient client = null);
+        string Execute(string[] args, out MessageTypeEnum result);
     }
 }

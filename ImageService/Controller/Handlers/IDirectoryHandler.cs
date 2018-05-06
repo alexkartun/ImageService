@@ -8,7 +8,6 @@ namespace ImageService.Controller.Handlers
     public interface IDirectoryHandler
     {
         string Path { get; set; }
-        event EventHandler<MessageRecievedEventArgs> MessageLogger;
         /// <summary>
         /// Start handler specific directory.
         /// </summary>
@@ -19,6 +18,5 @@ namespace ImageService.Controller.Handlers
         /// </summary>
         /// <param name="sender"> Server. </param>
         /// <param name="command_args"> Arguments for command to be executed. </param>
-        //void OnCommandRecieved(object sender, CommandRecievedEventArgs command_args);
     }
 }

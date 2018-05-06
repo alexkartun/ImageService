@@ -1,22 +1,20 @@
-﻿using ImageService.Logging;
-using ImageService.Server;
+﻿using ImageService.Server;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.ServiceProcess;
 using System.Configuration;
 using System.Runtime.InteropServices;
-using ImageService.Logging.Modal;
 using ImageService.Modal;
 using ImageService.Controller;
-using ImageService.Infastructure.Enums;
 using ImageService.Modal.Event;
+using ImageService.Logging;
+using ImageService.Logging.Modal;
+using ImageService.Infastructure.Modal;
+using System.Collections.Generic;
 
 namespace ImageService
 {
-	public enum ServiceState
+    public enum ServiceState
 	{
 		SERVICE_STOPPED = 0x00000001,
 		SERVICE_START_PENDING = 0x00000002,
@@ -48,10 +46,11 @@ namespace ImageService
             InitializeComponent();
             string eventSourceName = ConfigurationManager.AppSettings["SourceName"];
 			string logName = ConfigurationManager.AppSettings["LogName"];
-            string ip = ConfigurationManager.AppSettings["Ip"];
             string output_dir_path = ConfigurationManager.AppSettings["OutputDir"];
             string thumbnail_size = ConfigurationManager.AppSettings["ThumbnailSize"];
+            string directories = ConfigurationManager.AppSettings["Handler"];
             string port = ConfigurationManager.AppSettings["Port"];
+            string ip = ConfigurationManager.AppSettings["Ip"];
             eventLogger = new EventLog
             {
                 Source = eventSourceName,
@@ -60,15 +59,32 @@ namespace ImageService
             image_logger = new LoggingService();
             image_logger.MessageRecieved += OnMsg;
             IImageServiceModal image_modal = new ImageServiceModal(output_dir_path, int.Parse(thumbnail_size));
-            image_modal.LogRecieved += OnLogRecieved;
-            IImageController controller = new ImageController(image_modal);
+            ILogsServiceModal logs_modal = new LogsServiceModal(GetListOfLogs());
+            ISettingsModal settings_modal = new SettingsModal(new Config(output_dir_path, eventSourceName,
+                logName, thumbnail_size, GetListOfDirectories(directories)));
+            IImageController controller = new ImageController(image_modal, logs_modal, settings_modal);
             image_server = new ImageServer(ip, port, image_logger, controller);
 		}
 
-        private void OnLogRecieved(object sender, LogEventArgs log_args)
+        private List<Log> GetListOfLogs()
         {
-            IImageServiceModal modal = (IImageServiceModal) sender;
-            modal.SendLogsToClient(log_args.CLIENT, eventLogger.Entries);
+            List<Log> logs = new List<Log>();
+            foreach (EventLogEntry entry in eventLogger.Entries)
+            {
+                logs.Add(new Log(entry.Message, ConvertEventTypeToMessageType(entry.EntryType)));
+            }
+            return logs;
+        }
+
+        private List<string> GetListOfDirectories(string directories)
+        {
+            string[] paths = directories.Split(';');
+            List<string> dir_paths = new List<string>();
+            foreach (string path in paths)
+            {
+                dir_paths.Add(path);
+            }
+            return dir_paths;
         }
 
         [DllImport("advapi32.dll", SetLastError = true)]
@@ -127,6 +143,13 @@ namespace ImageService
             if (status == MessageTypeEnum.INFO) return EventLogEntryType.Information;
             else if (status == MessageTypeEnum.WARNING) return EventLogEntryType.Warning;
             else return EventLogEntryType.Error;
+        }
+
+        private static MessageTypeEnum ConvertEventTypeToMessageType(EventLogEntryType status)
+        {
+            if (status == EventLogEntryType.Information) return MessageTypeEnum.INFO;
+            else if (status == EventLogEntryType.Warning) return MessageTypeEnum.WARNING;
+            else return MessageTypeEnum.FAIL;
         }
     }
 }

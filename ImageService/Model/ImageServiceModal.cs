@@ -10,18 +10,17 @@ using System.Configuration;
 using System.Net.Sockets;
 using ImageService.Modal.Event;
 using System.Diagnostics;
-using ImageService.Logging;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using ImageService.Infastructure.Modal;
 
-namespace ImageService.Modal
+namespace ImageService.Model
 {
-	public class ImageServiceModal : IImageServiceModal
+    public class ImageServiceModal : IImageServiceModal
 	{
 		private string m_OutputFolder;
 		private string m_ThumbnailFolder;
 		private int m_thumbnailSize;
-
-        public event EventHandler<LogEventArgs> LogRecieved;
-        public event EventHandler<DirectoryCloseEventArgs> CloseResieved;
 
         public ImageServiceModal(string output_folder, int thumbnail_size)
 		{
@@ -132,55 +131,8 @@ namespace ImageService.Modal
         public string CloseDirectory(string[] args, out MessageTypeEnum result)
         {
             result = MessageTypeEnum.INFO;
-            CloseResieved(this, new DirectoryCloseEventArgs(args[0]));
-            return "Got command ID: " + ((int)CommandEnum.CloseCommand).ToString() + " Args: " + args[0];
-        }
-
-        public string GetConfig(out MessageTypeEnum result, TcpClient client = null)
-        {
-            result = MessageTypeEnum.INFO;
-            string output = "";
-            string output_directory = ConfigurationManager.AppSettings["OutputDir"] + " ";
-            string source_name = ConfigurationManager.AppSettings["SourceName"] + " ";
-            string log_name = ConfigurationManager.AppSettings["LogName"] + " ";
-            string thumbnail_size = ConfigurationManager.AppSettings["ThumbnailSize"] + " ";
-            output += output_directory + source_name + log_name + thumbnail_size;
-            //TODO: Directories.
-            using (NetworkStream stream = client.GetStream())
-            using (StreamWriter writer = new StreamWriter(stream))
-            {
-                writer.WriteLine(output);
-            }
-            return "Got command ID: " + ((int) CommandEnum.GetConfigCommand).ToString() + " Args:";
-        }
-
-        public string GetAllLog(out MessageTypeEnum result, TcpClient client = null)
-        {
-            result = MessageTypeEnum.INFO;
-            LogRecieved(this, new LogEventArgs(client));
-            return "Got command ID: " + ((int) CommandEnum.LogCommand).ToString() + " Args:";
-        }
-
-        public void SendLogsToClient(TcpClient client, EventLogEntryCollection entries)
-        {
-            string output = "";
-            foreach(EventLogEntry entry in entries)
-            {
-                output += "Message: " + entry.Message + " Type: " + 
-                    ((int)ConvertEventLogEntryToStat(entry.EntryType)).ToString() + ", ";
-            }
-            using (NetworkStream stream = client.GetStream())
-            using (StreamWriter writer = new StreamWriter(stream))
-            {
-                writer.WriteLine(output);
-            }
-        }
-        
-        private static MessageTypeEnum ConvertEventLogEntryToStat(EventLogEntryType status)
-        {
-            if (status == EventLogEntryType.Information) return MessageTypeEnum.INFO;
-            else if (status == EventLogEntryType.Warning) return MessageTypeEnum.WARNING;
-            else return MessageTypeEnum.FAIL;
+            //CloseResieved(this, new DirectoryCloseEventArgs(args[0]));
+            return "Got command ID: " + ((int) CommandEnum.CloseCommand).ToString() + " Args: " + args[0];
         }
     }
 }

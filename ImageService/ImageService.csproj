@@ -67,16 +67,14 @@
     <Compile Include="Controller\Handlers\IDirectoryHandler.cs" />
     <Compile Include="Controller\IImageController.cs" />
     <Compile Include="Controller\ImageController.cs" />
-    <Compile Include="Infastructure\Enums\CommandEnum.cs" />
-    <Compile Include="Logger\ILoggingService.cs" />
-    <Compile Include="Logger\LoggingService.cs" />
-    <Compile Include="Logger\Modal\MessageRecievedEventArgs.cs" />
-    <Compile Include="Logger\Modal\MessageTypeEnum.cs" />
-    <Compile Include="Modal\Event\CommandRecievedEventArgs.cs" />
-    <Compile Include="Modal\Event\DirectoryCloseEventArgs.cs" />
-    <Compile Include="Modal\Event\LogEventArgs.cs" />
-    <Compile Include="Modal\IImageServiceModal.cs" />
-    <Compile Include="Modal\ImageServiceModal.cs" />
+    <Compile Include="Model\Event\CommandRecievedEventArgs.cs" />
+    <Compile Include="Model\Event\DirectoryCloseEventArgs.cs" />
+    <Compile Include="Model\IImageServiceModal.cs" />
+    <Compile Include="Model\ImageServiceModal.cs" />
+    <Compile Include="Model\ILogsServiceModal.cs" />
+    <Compile Include="Model\ISettingsModal.cs" />
+    <Compile Include="Model\LogsServiceModal.cs" />
+    <Compile Include="Model\SettingsModal.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -107,6 +105,20 @@
     <EmbeddedResource Include="ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ConsoleApp1\ImageService.Logging.csproj">
+      <Project>{AE17E4D1-11DD-486B-A698-E0727D6D9E42}</Project>
+      <Name>ImageService.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ImageService.Communication.cs\ImageService.Communication.csproj">
+      <Project>{E3D8993C-D440-4ECA-8D15-F94E5434AFB6}</Project>
+      <Name>ImageService.Communication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ImageService.Infastructure\ImageService.Infastructure.csproj">
+      <Project>{C6D157CD-B2BF-48E1-80DF-48C770347F66}</Project>
+      <Name>ImageService.Infastructure</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
