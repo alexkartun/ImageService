@@ -9,7 +9,7 @@ namespace ImageService.Infastructure.Event
         public string[] Args { get; }
         public TcpClient Client_Socket { get; }
 
-        public CommandRecievedEventArgs(int a_id, string[] a_args, TcpClient client)
+        public CommandRecievedEventArgs(int a_id, string[] a_args, TcpClient client = null)
         {
             Command = a_id;
             Args = a_args;

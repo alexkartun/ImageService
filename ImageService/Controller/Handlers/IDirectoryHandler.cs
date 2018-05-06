@@ -1,8 +1,12 @@
-﻿namespace ImageService.Controller.Handlers
+﻿using ImageService.Infastructure.Event;
+using System;
+
+namespace ImageService.Controller.Handlers
 {
     public interface IDirectoryHandler
     {
         string Path { get; set; }
+        event EventHandler<CommandRecievedEventArgs> CommandRecieved;
         /// <summary>
         /// Start handler specific directory.
         /// </summary>

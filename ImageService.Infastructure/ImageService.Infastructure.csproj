@@ -46,11 +46,5 @@
     <Compile Include="Model\Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ConsoleApp1\ImageService.Logging.csproj">
-      <Project>{AE17E4D1-11DD-486B-A698-E0727D6D9E42}</Project>
-      <Name>ImageService.Logging</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,24 +1,21 @@
 ﻿using System;
 using System.IO;
 using ImageService.Infastructure.Enums;
+using ImageService.Infastructure.Event;
 using ImageService.Infastructure.Model;
-using ImageService.Logging;
 using ImageService.Logging.Model;
 
 namespace ImageService.Controller.Handlers
 {
     class DirectoryHandler : IDirectoryHandler
     {
-        private IImageController m_controller;
-        private ILoggingService m_logger;
         private FileSystemWatcher m_dirWatcher;
         public String Path { get; set; }
 
-        public DirectoryHandler(string path, IImageController controller, ILoggingService logger)
+        public event EventHandler<CommandRecievedEventArgs> CommandRecieved;
+        public DirectoryHandler(string path)
         {
             Path = path;
-            m_controller = controller;
-            m_logger = logger;
             m_dirWatcher = new FileSystemWatcher(Path);
         }
 
@@ -45,11 +42,7 @@ namespace ImageService.Controller.Handlers
                 || strFileExt.CompareTo(".gif") == 0 || strFileExt.CompareTo(".bmp") == 0)
             {
                 string[] args = { e.FullPath, e.Name };
-                string result = m_controller.ExecuteCommand((int)CommandEnum.NewFileCommand,
-                    args, out MessageTypeEnum status);
-                // Update logger with the result.
-                m_logger.Log(result, status);
-                m_controller.LogsModal.ServiceLogs.Add(new Log(result, status));
+                CommandRecieved(this, new CommandRecievedEventArgs((int) CommandEnum.NewFileCommand, args));
             }
         }
 
@@ -69,6 +62,7 @@ namespace ImageService.Controller.Handlers
         public void StopHandleDirectory()
         {
             m_dirWatcher.EnableRaisingEvents = false;
+            m_dirWatcher.Dispose();
         }
     }
 }
