@@ -8,6 +8,6 @@ namespace ImageService.Model
     public interface ILogsServiceModal
     {
         List<Log> ServiceLogs { get; set; }
-        string GetAllLog(out MessageTypeEnum result, TcpClient client = null);
+        string GetAllLog(out MessageTypeEnum result, TcpClient client);
     }
 }

@@ -2,6 +2,7 @@
 using ImageService.Logging.Model;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 
 namespace ImageService.Model
@@ -16,10 +17,15 @@ namespace ImageService.Model
             ServiceLogs = new List<Log>();
         }
 
-        public string GetAllLog(out MessageTypeEnum result, TcpClient client = null)
+        public string GetAllLog(out MessageTypeEnum result, TcpClient client)
         {
             result = MessageTypeEnum.INFO;
-            string output = JsonConvert.SerializeObject(ServiceLogs);         
+            string output = JsonConvert.SerializeObject(ServiceLogs);
+            using (NetworkStream stream = client.GetStream())
+            using (StreamWriter writer = new StreamWriter(stream))
+            {
+                writer.Write(output);
+            }
             return output;
         }
 

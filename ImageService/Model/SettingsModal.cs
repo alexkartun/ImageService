@@ -14,10 +14,15 @@ namespace ImageService.Model
             ServiceConfig = new Config(src_name, log_name, output_dir_path, thumbnail_size);
         }
 
-        public string GetConfig(out MessageTypeEnum result, TcpClient client = null)
+        public string GetConfig(out MessageTypeEnum result, TcpClient client)
         {
             result = MessageTypeEnum.INFO;
             string output = JsonConvert.SerializeObject(ServiceConfig);
+            using (NetworkStream stream = client.GetStream())
+            using (StreamWriter writer = new StreamWriter(stream))
+            {
+                writer.Write(output);
+            }
             return output;
         }
     }
