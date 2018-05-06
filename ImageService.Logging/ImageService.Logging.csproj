@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C6D157CD-B2BF-48E1-80DF-48C770347F66}</ProjectGuid>
+    <ProjectGuid>{C667F9E9-CC89-4C17-B2E0-7B11D8269EA4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ImageService.Infastructure</RootNamespace>
-    <AssemblyName>ImageService.Infastructure</AssemblyName>
+    <RootNamespace>ImageService.Logging</RootNamespace>
+    <AssemblyName>ImageService.Logging</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,17 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enums\CommandEnum.cs" />
-    <Compile Include="Model\CommandRecievedEventArgs.cs" />
-    <Compile Include="Model\Config.cs" />
-    <Compile Include="Model\Log.cs" />
+    <Compile Include="ILoggingService.cs" />
+    <Compile Include="LoggingService.cs" />
+    <Compile Include="Model\MessageRecievedEventArgs.cs" />
+    <Compile Include="Model\MessageTypeEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ImageService.Logging\ImageService.Logging.csproj">
-      <Project>{C667F9E9-CC89-4C17-B2E0-7B11D8269EA4}</Project>
-      <Name>ImageService.Logging</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
