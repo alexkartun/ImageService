@@ -1,6 +1,7 @@
 ﻿using ImageService.Infastructure.Model;
 using ImageService.Logging.Model;
 using Newtonsoft.Json;
+using System.IO;
 using System.Net.Sockets;
 
 namespace ImageService.Model

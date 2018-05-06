@@ -6,17 +6,16 @@ namespace ImageService.Commands
 {
     class CloseCommand : ICommand
     {
-        private IImageServiceModal m_modal;
+        private ICloseModal m_modal;
 
-        public CloseCommand(IImageServiceModal modal)
+        public CloseCommand(ICloseModal modal)
         {
             m_modal = modal;
         }
 
         public string Execute(string[] args, out MessageTypeEnum result, TcpClient client = null)
         {
-            result = MessageTypeEnum.INFO;
-            return "";
+			return m_modal.CloseDirectory(args, out result);
         }
     }
 }

@@ -12,19 +12,22 @@ namespace ImageService.Controller
         public IImageServiceModal ImageModal { get; set; }
         public ISettingsModal SettingsModal { get; set; }
         public ILogsServiceModal LogsModal { get; set; }
+		public ICloseModal CloseModal { get; set; }
 
-        private Dictionary<int, ICommand> commands;
+		private Dictionary<int, ICommand> commands;
 
 		public ImageController(IImageServiceModal image_modal, ILogsServiceModal logging_modal,
-            ISettingsModal settings_modal)
+            ISettingsModal settings_modal, ICloseModal close_modal)
         {
             ImageModal = image_modal;
             LogsModal = logging_modal;
             SettingsModal = settings_modal;
+			CloseModal = close_modal;
+
             commands = new Dictionary<int, ICommand>()
             {
                 { (int) CommandEnum.NewFileCommand, new NewFileCommand(ImageModal) },
-                //{ (int) CommandEnum.CloseCommand, new CloseCommand(ImageModal) },
+                { (int) CommandEnum.CloseCommand, new CloseCommand(CloseModal) },
                 { (int) CommandEnum.LogCommand, new LogCommand(LogsModal) },
                 { (int) CommandEnum.GetConfigCommand, new ConfigCommand(SettingsModal) }
             };

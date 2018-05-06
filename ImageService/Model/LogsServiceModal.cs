@@ -26,6 +26,7 @@ namespace ImageService.Model
             {
                 writer.Write(output);
             }
+			//TODO: best result?
             return output;
         }
 

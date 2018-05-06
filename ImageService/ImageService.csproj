@@ -67,7 +67,9 @@
     <Compile Include="Controller\Handlers\IDirectoryHandler.cs" />
     <Compile Include="Controller\IImageController.cs" />
     <Compile Include="Controller\ImageController.cs" />
+    <Compile Include="Model\CloseModal.cs" />
     <Compile Include="Model\Event\DirectoryCloseEventArgs.cs" />
+    <Compile Include="Model\ICloseModal.cs" />
     <Compile Include="Model\IImageServiceModal.cs" />
     <Compile Include="Model\ImageServiceModal.cs" />
     <Compile Include="Model\ILogsServiceModal.cs" />

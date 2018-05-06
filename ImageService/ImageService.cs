@@ -54,10 +54,11 @@ namespace ImageService
             };
             image_logger = new LoggingService();
             image_logger.MessageRecieved += OnMsg;
+			ICloseModal close_modal = new CloseModal();
             IImageServiceModal image_modal = new ImageServiceModal(output_dir_path, int.Parse(thumbnail_size));
             ILogsServiceModal logs_modal = new LogsServiceModal();
             ISettingsModal settings_modal = new SettingsModal(eventSourceName, logName, output_dir_path, thumbnail_size);
-            IImageController controller = new ImageController(image_modal, logs_modal, settings_modal);
+            IImageController controller = new ImageController(image_modal, logs_modal, settings_modal, close_modal);
             image_server = new ImageServer(ip, port, image_logger, controller);
 		}
 
