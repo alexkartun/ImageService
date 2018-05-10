@@ -1,29 +1,42 @@
-﻿using ImageService.Infastructure.Model;
+﻿using ImageService.Communication.Model;
+using ImageService.Infastructure.Enums;
 using ImageService.Logging.Model;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 
 namespace ImageService.Model
 {
     public class SettingsModal : ISettingsModal
     {
-        public Config ServiceConfig { get; set; }
+        private string output_directory;
+        private string source_name;
+        private string log_name;
+        private string thumbnail_size;
+        public List<string> Directory_Paths { get; set; }
 
         public SettingsModal(string src_name, string log_name, string output_dir_path, string thumbnail_size)
         {
-            ServiceConfig = new Config(src_name, log_name, output_dir_path, thumbnail_size);
+            output_directory = output_dir_path;
+            source_name = src_name;
+            this.log_name = log_name;
+            this.thumbnail_size = thumbnail_size;
+            Directory_Paths = new List<string>();
         }
 
-        public string GetConfig(out MessageTypeEnum result, TcpClient client)
+        public string GetSettings(out MessageTypeEnum result, TcpClient client)
         {
             result = MessageTypeEnum.INFO;
-            string output = JsonConvert.SerializeObject(ServiceConfig);
-            using (NetworkStream stream = client.GetStream())
-            using (StreamWriter writer = new StreamWriter(stream))
-            {
-                writer.Write(output);
-            }
+            string[] service_data = { output_directory, source_name, log_name, thumbnail_size };
+            string[] dir_paths = Directory_Paths.ToArray();
+            var args = service_data.Union(dir_paths);
+            string output = JsonConvert.SerializeObject(new CommandMessage((int)CommandEnum.GetConfigCommand,
+                args.ToArray()));
+            NetworkStream stream = client.GetStream();
+            StreamWriter writer = new StreamWriter(stream);
+            writer.Write(output);
             return output;
         }
     }

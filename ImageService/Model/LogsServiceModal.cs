@@ -1,4 +1,5 @@
-﻿using ImageService.Infastructure.Model;
+﻿using ImageService.Communication.Model;
+using ImageService.Infastructure.Enums;
 using ImageService.Logging.Model;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -10,23 +11,22 @@ namespace ImageService.Model
     public class LogsServiceModal : ILogsServiceModal
     {
 
-        public List<Log> ServiceLogs { get; set; }
+        public List<string> ServiceLogs { get; set; }
 
         public LogsServiceModal()
         {
-            ServiceLogs = new List<Log>();
+            ServiceLogs = new List<string>();
         }
 
         public string GetAllLog(out MessageTypeEnum result, TcpClient client)
         {
             result = MessageTypeEnum.INFO;
-            string output = JsonConvert.SerializeObject(ServiceLogs);
-            using (NetworkStream stream = client.GetStream())
-            using (StreamWriter writer = new StreamWriter(stream))
-            {
-                writer.Write(output);
-            }
-			//TODO: best result?
+            CommandMessage msg = new CommandMessage((int) CommandEnum.LogCommand, ServiceLogs.ToArray());
+            string output = JsonConvert.SerializeObject(msg);
+            NetworkStream stream = client.GetStream();
+            StreamWriter writer = new StreamWriter(stream);
+            writer.Write(output);
+            //TODO: best result?
             return output;
         }
 

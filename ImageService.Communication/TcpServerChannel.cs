@@ -30,11 +30,9 @@ namespace ImageService.Communication
             string output = JsonConvert.SerializeObject(msg);
             foreach (TcpClient client in clients)
             {
-                using (NetworkStream stream = client.GetStream())
-                using (StreamWriter writer = new StreamWriter(stream))
-                {
-                    writer.Write(output);
-                }
+                NetworkStream stream = client.GetStream();
+                StreamWriter writer = new StreamWriter(stream);
+                writer.Write(output);
             }
         }
 

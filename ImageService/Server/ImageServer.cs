@@ -4,7 +4,6 @@ using ImageService.Controller;
 using ImageService.Controller.Handlers;
 using ImageService.Infastructure.Enums;
 using ImageService.Infastructure.Event;
-using ImageService.Infastructure.Model;
 using ImageService.Logging;
 using ImageService.Logging.Model;
 using ImageService.Model.Event;
@@ -48,10 +47,11 @@ namespace ImageService.Server
 				c_args.Client_Socket);
 			// Update eventlogger and LogsModal with new log.
 			logging_service.Log(output, status);
-			image_controller.LogsModal.ServiceLogs.Add(new Log(output, status));
-			string[] args = { output, ((int)status).ToString() };
-			// Send log to all clients.
-			server.SendCommandBroadCast(new CommandMessage((int)CommandEnum.LogCommand, args));
+            string[] args = { output, ((int)status).ToString() };
+            image_controller.LogsModal.ServiceLogs.Add(args[0]);
+            image_controller.LogsModal.ServiceLogs.Add(args[1]);
+            // Send log to all clients.
+            server.SendCommandBroadCast(new CommandMessage((int) CommandEnum.LogCommand, args));
 		}
 			
         /// <summary>
@@ -74,7 +74,7 @@ namespace ImageService.Server
 			// Remove the directory from the handlers.
 			directory_handlers.Remove(rm_dir);
             // Remove the path from the config.
-            image_controller.SettingsModal.ServiceConfig.Directory_Paths.Remove(close_args.DirectoryPath);
+            image_controller.SettingsModal.Directory_Paths.Remove(close_args.DirectoryPath);
             // Update all clients.
             string[] args = { close_args.DirectoryPath };
             server.SendCommandBroadCast(new CommandMessage((int)CommandEnum.CloseCommand, args));
@@ -110,7 +110,7 @@ namespace ImageService.Server
                 // Bind handler new command event with server.
                 handler.CommandRecieved += OnCommandRecieved;
                 // Add directory path to Config.
-                image_controller.SettingsModal.ServiceConfig.Directory_Paths.Add(path);
+                image_controller.SettingsModal.Directory_Paths.Add(path);
             }
 			image_controller.CloseModal.OnClose += OnCloseHandler;
 		}

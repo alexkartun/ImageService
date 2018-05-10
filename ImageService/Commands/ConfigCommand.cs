@@ -15,7 +15,7 @@ namespace ImageService.Commands
 
         public string Execute(string[] args, out MessageTypeEnum result, TcpClient client = null)
         {
-            return m_modal.GetConfig(out result, client);
+            return m_modal.GetSettings(out result, client);
         }
     }
 }

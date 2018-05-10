@@ -2,8 +2,6 @@
 using System.IO;
 using ImageService.Infastructure.Enums;
 using ImageService.Infastructure.Event;
-using ImageService.Infastructure.Model;
-using ImageService.Logging.Model;
 
 namespace ImageService.Controller.Handlers
 {
