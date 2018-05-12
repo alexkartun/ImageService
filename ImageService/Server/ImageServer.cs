@@ -43,7 +43,7 @@ namespace ImageService.Server
 
 		private void OnCommandRecieved(object sender, CommandRecievedEventArgs c_args)
 		{
-			string output = image_controller.ExecuteCommand(c_args.Command, c_args.Args, out MessageTypeEnum status,
+            string output = image_controller.ExecuteCommand(c_args.Command, c_args.Args, out MessageTypeEnum status,
 				c_args.Client_Socket);
 			// Update eventlogger and LogsModal with new log.
 			logging_service.Log(output, status);
@@ -52,6 +52,7 @@ namespace ImageService.Server
             image_controller.LogsModal.ServiceLogs.Add(args[1]);
             // Send log to all clients.
             server.SendCommandBroadCast(new CommandMessage((int) CommandEnum.LogCommand, args));
+            
 		}
 			
         /// <summary>

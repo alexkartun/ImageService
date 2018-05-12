@@ -1,6 +1,8 @@
 ﻿using ImageService.Communication.Model;
+using ImageService.Infastructure.Enums;
 using ImageService.Infastructure.Event;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -23,6 +25,12 @@ namespace ImageService.Communication
             this.port = port;
             clients = new List<TcpClient>();
             Client_Handler = new ClientHandler();
+            Client_Handler.ExitRecieved += OnExitRecieved;
+        }
+
+        public void OnExitRecieved(object sender, CommandRecievedEventArgs args)
+        {
+            clients.Remove(args.Client_Socket);
         }
 
         public void SendCommandBroadCast(CommandMessage msg)
@@ -31,18 +39,21 @@ namespace ImageService.Communication
             foreach (TcpClient client in clients)
             {
                 NetworkStream stream = client.GetStream();
-                StreamWriter writer = new StreamWriter(stream);
-                writer.Write(output);
+                StreamWriter writer = new StreamWriter(stream)
+                {
+                    AutoFlush = true
+                };
+                writer.WriteLine(output);
             }
         }
 
         public void Start()
         {
-            IPEndPoint ep = new IPEndPoint(IPAddress.Parse(ip), int.Parse(port));
+            IPEndPoint ep = new IPEndPoint(IPAddress.Parse(ip), Int32.Parse(port));
             server = new TcpListener(ep);
+            server.Start();
             Task task = new Task(() =>
             {
-                server.Start();
                 while (true)
                 {
                     try
@@ -63,6 +74,19 @@ namespace ImageService.Communication
 
         public void Stop()
         {
+            // Send for every client to exit.
+            foreach (TcpClient client in clients)
+            {
+                // Service stopping
+                NetworkStream stream = client.GetStream();
+                StreamWriter writer = new StreamWriter(stream)
+                {
+                    AutoFlush = true
+                };
+                CommandMessage msg = new CommandMessage((int)CommandEnum.ExitCommand);
+                string output = JsonConvert.SerializeObject(msg);
+                writer.WriteLine(output);
+            }
             server.Stop();
         }
     }

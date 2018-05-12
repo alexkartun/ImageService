@@ -21,14 +21,17 @@ namespace ImageService.Model
         public string GetAllLog(out MessageTypeEnum result, TcpClient client)
         {
             result = MessageTypeEnum.INFO;
-            CommandMessage msg = new CommandMessage((int) CommandEnum.LogCommand, ServiceLogs.ToArray());
+            CommandMessage msg = new CommandMessage((int)CommandEnum.LogCommand, ServiceLogs.ToArray());
             string output = JsonConvert.SerializeObject(msg);
             NetworkStream stream = client.GetStream();
-            StreamWriter writer = new StreamWriter(stream);
-            writer.Write(output);
-            //TODO: best result?
-            return output;
+            StreamWriter writer = new StreamWriter(stream)
+            {
+                AutoFlush = true
+            };
+            writer.WriteLine(output);
+            return "Got command ID: " + ((int)CommandEnum.LogCommand).ToString() + " Args: ";
         }
+        
 
     }
 }

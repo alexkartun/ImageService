@@ -36,7 +36,7 @@ namespace ImageService.Controller
 		public string ExecuteCommand(int commandID, string[] args, out MessageTypeEnum status, TcpClient client)
 		{
 			ICommand command = commands[commandID];
-            return command.Execute(args, out status,client);
+            return command.Execute(args, out status, client);
         }
 	}
 }

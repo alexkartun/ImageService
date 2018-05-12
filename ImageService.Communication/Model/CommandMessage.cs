@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +10,10 @@ namespace ImageService.Communication.Model
 {
     public class CommandMessage
     {
-        public int Command { get; }
-        public string[] Args { get; }
+        [JsonProperty("id")]
+        public int Command { get; set; }
+        [JsonProperty("args")]
+        public string[] Args { get; set; }
 
         public CommandMessage(int a_cmd, string[] a_args = null)
         {

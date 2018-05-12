@@ -31,13 +31,16 @@ namespace ImageService.Model
             result = MessageTypeEnum.INFO;
             string[] service_data = { output_directory, source_name, log_name, thumbnail_size };
             string[] dir_paths = Directory_Paths.ToArray();
-            var args = service_data.Union(dir_paths);
-            string output = JsonConvert.SerializeObject(new CommandMessage((int)CommandEnum.GetConfigCommand,
-                args.ToArray()));
+            string[] args = service_data.Union(dir_paths).ToArray();
+            CommandMessage msg = new CommandMessage((int) CommandEnum.GetConfigCommand, args);
+            string output = JsonConvert.SerializeObject(msg);
             NetworkStream stream = client.GetStream();
-            StreamWriter writer = new StreamWriter(stream);
-            writer.Write(output);
-            return output;
+            StreamWriter writer = new StreamWriter(stream)
+            {
+                AutoFlush = true
+            };
+            writer.WriteLine(output);
+            return "Got command ID: " + ((int)CommandEnum.GetConfigCommand).ToString() + " Args: ";
         }
     }
 }
