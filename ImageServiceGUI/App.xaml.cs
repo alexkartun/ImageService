@@ -13,5 +13,7 @@ namespace ImageServiceGUI
 	/// </summary>
 	public partial class App : Application
 	{
-	}
+
+    }
+
 }

@@ -11,27 +11,15 @@ using System.Threading.Tasks;
 
 namespace ImageService.Communication
 {
-    class TcpClientChannel
+    public class TcpClientChannel
     {
-        private static TcpClientChannel instance = null;
+        private TcpClient client;
         private static string ip = "127.0.0.1";
         private static string port = "8000";
-        private TcpClient client;
 
-        private TcpClientChannel()
+        public TcpClientChannel()
         {
             client = new TcpClient();
-        }
-        public static TcpClientChannel Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new TcpClientChannel();
-                }
-                return instance;
-            }
         }
 
         public Boolean Connect()
@@ -39,6 +27,11 @@ namespace ImageService.Communication
             IPEndPoint ep = new IPEndPoint(IPAddress.Parse(ip), Int32.Parse(port));
             client.Connect(ep);
             return client.Connected;
+        }
+
+        public void Disconnect()
+        {
+            client.Close();
         }
 
         public void SendMessage(CommandMessage msg)

@@ -1,4 +1,5 @@
-﻿using ImageServiceGUI.ViewModel;
+﻿using ImageServiceGUI.Communication;
+using ImageServiceGUI.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,12 +22,10 @@ namespace ImageServiceGUI.Views
     /// </summary>
     public partial class LogView : UserControl
     {
-        private LogViewModel log_vm;
         public LogView()
         {
             InitializeComponent();
-            log_vm = new LogViewModel();
-            DataContext = log_vm;
+            DataContext = new LogViewModel(GuiChannel.Instance);
         }
     }
 }

@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ImageServiceGUI.Communication;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,10 +22,25 @@ namespace ImageServiceGUI
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		public MainWindow()
+        public MainWindow()
 		{
 			InitializeComponent();
-		}
+            GuiChannel c = GuiChannel.Instance;
+            if (c.Connect()) // Connected to server.
+            {
+                c.Start();
+                c.GetSettings();
+            } 
+            else  // Not Connected
+            {
+                
+            }
+        }
 
+        public void OnWindowClosing(object sender, CancelEventArgs e)
+        {
+            GuiChannel c = GuiChannel.Instance;
+            c.Disconnect();
+        }
     }
 }

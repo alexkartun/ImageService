@@ -13,16 +13,14 @@ namespace ImageService.Communication
 {
     public class TcpServerChannel
     {
-        private string ip;
-        private string port;
+        private static string ip = "127.0.0.1";
+        private static string port = "8000";
         private TcpListener server;
         private List<TcpClient> clients;
         public ClientHandler Client_Handler { get; }
 
-        public TcpServerChannel(string ip, string port)
+        public TcpServerChannel()
         {
-            this.ip = ip;
-            this.port = port;
             clients = new List<TcpClient>();
             Client_Handler = new ClientHandler();
             Client_Handler.ExitRecieved += OnExitRecieved;

@@ -16,6 +16,7 @@ namespace ImageService.Communication
     {
         public event EventHandler<CommandRecievedEventArgs> CommandRecieved;
         public event EventHandler<CommandRecievedEventArgs> ExitRecieved;
+
         public void HandleClient(TcpClient client)
         {
             new Task(() =>

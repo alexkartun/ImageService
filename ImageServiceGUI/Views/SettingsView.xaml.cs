@@ -1,4 +1,6 @@
-﻿using ImageServiceGUI.ViewModel;
+﻿using ImageServiceGUI.Communication;
+using ImageServiceGUI.Model;
+using ImageServiceGUI.ViewModel;
 using System.Windows.Controls;
 
 namespace ImageServiceGUI.Views
@@ -8,12 +10,10 @@ namespace ImageServiceGUI.Views
     /// </summary>
     public partial class SettingsView : UserControl
     {
-        private SettingsViewModel settings_vm;
         public SettingsView()
         {
             InitializeComponent();
-            settings_vm = new SettingsViewModel();
-            DataContext = settings_vm;
+            DataContext = new SettingsViewModel(GuiChannel.Instance);
         }
     }
 }

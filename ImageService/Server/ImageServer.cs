@@ -19,9 +19,9 @@ namespace ImageService.Server
         private List<IDirectoryHandler> directory_handlers;
         private TcpServerChannel server;
 
-        public ImageServer(string ip, string port, ILoggingService logger, IImageController controller)
+        public ImageServer(ILoggingService logger, IImageController controller)
         {
-            server = new TcpServerChannel(ip, port);
+            server = new TcpServerChannel();
             image_controller = controller;
             logging_service = logger;
             directory_handlers = new List<IDirectoryHandler>();
