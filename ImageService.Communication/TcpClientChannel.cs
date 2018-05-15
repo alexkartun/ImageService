@@ -31,6 +31,7 @@ namespace ImageService.Communication
 
         public void Disconnect()
         {
+            client.GetStream().Close();
             client.Close();
         }
 

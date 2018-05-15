@@ -76,7 +76,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Communication\GuiChannel.cs" />
+    <Compile Include="Converters\ColorConverter.cs" />
     <Compile Include="Converters\CommandConverter.cs" />
+    <Compile Include="Model\Log.cs" />
     <Compile Include="ViewModel\LogViewModel.cs" />
     <Compile Include="ViewModel\SettingsViewModel.cs" />
     <Compile Include="Views\LogView.xaml.cs">
@@ -107,7 +109,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\ISettingsModel.cs" />
     <Compile Include="Model\LogModel.cs" />
     <Compile Include="Model\SettingsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -160,6 +161,10 @@
     <ProjectReference Include="..\ImageService.Infastructure\ImageService.Infastructure.csproj">
       <Project>{C6D157CD-B2BF-48E1-80DF-48C770347F66}</Project>
       <Name>ImageService.Infastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ImageService.Logging\ImageService.Logging.csproj">
+      <Project>{C667F9E9-CC89-4C17-B2E0-7B11D8269EA4}</Project>
+      <Name>ImageService.Logging</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

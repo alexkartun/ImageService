@@ -53,16 +53,20 @@ namespace ImageServiceGUI.Communication
         {
             new Task(() =>
             {
-                while(!stop)
+                try
                 {
-                    CommandMessage m = GetMessage();
-                    if (! Converter.Convert(m)) // Service stopped.
+                    while (!stop)
                     {
-                        stop = true;
-                        tcp_channel.Disconnect();
+                        CommandMessage m = GetMessage();
+                        if (!Converter.Convert(m)) // Service stopped.
+                        {
+                            stop = true;
+                            tcp_channel.Disconnect();
+                        }
+                        Thread.Sleep(250);
                     }
-                    Thread.Sleep(250);
                 }
+                catch (Exception) { }
             }).Start();
         }
 

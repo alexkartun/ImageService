@@ -64,7 +64,6 @@ namespace ImageService.Communication
                     {
                         break;
                     }
-
                 }
             });
             task.Start();

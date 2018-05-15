@@ -35,8 +35,6 @@ namespace ImageService.Communication
                             if (cmd.Command == (int) CommandEnum.ExitCommand)
                             {
                                 // Client want to exit.
-                                client.Close();
-                                ExitRecieved(this, new CommandRecievedEventArgs((int) CommandEnum.ExitCommand, null, client));
                                 break;
                             }
                             CommandRecieved(this, new CommandRecievedEventArgs(cmd.Command, cmd.Args, client));
@@ -47,6 +45,11 @@ namespace ImageService.Communication
                 catch (Exception)
                 {
                     // Error
+                }
+                finally
+                {
+                    client.Close();
+                    ExitRecieved(this, new CommandRecievedEventArgs((int)CommandEnum.ExitCommand, null, client));
                 }
             }).Start();
         }

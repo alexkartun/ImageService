@@ -12,12 +12,12 @@ namespace ImageServiceGUI.ViewModel
 {
     class SettingsViewModel : INotifyPropertyChanged
     {
-        private ISettingsModel sett_model;
+        private SettingsModel sett_model;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public SettingsViewModel(GuiChannel channel)
+        public SettingsViewModel(SettingsModel m)
         {
-            sett_model = new SettingsModel(channel);
+            sett_model = m;
             sett_model.PropertyChanged +=
                 delegate (Object sender, PropertyChangedEventArgs e)
                 {
@@ -30,39 +30,29 @@ namespace ImageServiceGUI.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
-        private string output_dir;
         public string VM_OutputDir
         {
-            get { return output_dir; }
-            set => output_dir = value;
+            get { return sett_model.OutputDir; }
         }
 
-        private string source_name;
         public string VM_SourceName
         {
-            get { return source_name; }
-            set => source_name = value;
+            get { return sett_model.SourceName; }
         }
 
-        private string log_name;
         public string VM_LogName
         {
-            get { return log_name; }
-            set => log_name = value;
+            get { return sett_model.LogName; }
         }
 
-        private string thumbnail_size;
         public string VM_ThumbnailSize
         {
-            get { return thumbnail_size; }
-            set => thumbnail_size = value;
+            get { return sett_model.ThumbnailSize; }
         }
 
-        private ObservableCollection<String> directory_handlers;
         public ObservableCollection<String> VM_DirectoryHandlers
         {
-            get { return directory_handlers;  }
-            set => directory_handlers = value;
+            get { return sett_model.DirectoryHandlers; }
         }
     }
 }

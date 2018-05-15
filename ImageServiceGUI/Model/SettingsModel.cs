@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ImageServiceGUI.Model
 {
-    class SettingsModel : ISettingsModel
+    class SettingsModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -18,6 +18,7 @@ namespace ImageServiceGUI.Model
         public SettingsModel(GuiChannel c)
         {
             channel = c;
+            directory_handlers = new ObservableCollection<String>();
             channel.Converter.SettingsRecieved += OnSettingsRecieved;
         }
 
@@ -44,13 +45,12 @@ namespace ImageServiceGUI.Model
             SourceName = args[1];
             LogName = args[2];
             ThumbnailSize = args[3];
-            ObservableCollection<String> handlers = new ObservableCollection<String>();
             for (int i = 4; i < args.Length; i++)
             {
-                handlers.Add(args[i]);
+                directory_handlers.Add(args[i]);
             }
-            DirectoryHandlers = handlers;
         }
+
         public void NotifyPropertyChanged(string propName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
