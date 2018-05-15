@@ -26,13 +26,17 @@ namespace ImageService.Communication
                     using (NetworkStream stream = client.GetStream())
                     using (StreamReader reader = new StreamReader(stream))
                     {
+                        CommandRecieved(this, new CommandRecievedEventArgs((int) CommandEnum.GetConfigCommand, null, client));
+                        CommandRecieved(this, new CommandRecievedEventArgs((int) CommandEnum.LogCommand, null, client));
                         while (true)
                         {
                             string commandLine = reader.ReadLine();
                             CommandMessage cmd = JsonConvert.DeserializeObject<CommandMessage>(commandLine);
-                            if (cmd.Command == (int)CommandEnum.ExitCommand)
+                            if (cmd.Command == (int) CommandEnum.ExitCommand)
                             {
                                 // Client want to exit.
+                                client.Close();
+                                ExitRecieved(this, new CommandRecievedEventArgs((int) CommandEnum.ExitCommand, null, client));
                                 break;
                             }
                             CommandRecieved(this, new CommandRecievedEventArgs(cmd.Command, cmd.Args, client));
@@ -43,11 +47,6 @@ namespace ImageService.Communication
                 catch (Exception)
                 {
                     // Error
-                }
-                finally
-                {
-                    client.Close();
-                    ExitRecieved(this, new CommandRecievedEventArgs((int)CommandEnum.ExitCommand, null, client));
                 }
             }).Start();
         }

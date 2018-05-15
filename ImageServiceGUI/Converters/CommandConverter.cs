@@ -21,7 +21,7 @@ namespace ImageServiceGUI.Converters
             {
                 SettingsRecieved(this, new CommandRecievedEventArgs(msg.Command, msg.Args));
             }
-            else if (msg.Command == (int)CommandEnum.LogCommand)
+            else if (msg.Command == (int) CommandEnum.LogCommand)
             {
                 LogsRecieved(this, new CommandRecievedEventArgs(msg.Command, msg.Args));
             }

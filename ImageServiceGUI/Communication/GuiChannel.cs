@@ -66,11 +66,6 @@ namespace ImageServiceGUI.Communication
             }).Start();
         }
 
-        public void GetSettings()
-        {
-            SendMessage(new CommandMessage((int)CommandEnum.GetConfigCommand));
-        }
-
         public void SendMessage(CommandMessage m)
         {
             tcp_channel.SendMessage(m);

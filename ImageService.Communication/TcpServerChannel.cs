@@ -84,6 +84,8 @@ namespace ImageService.Communication
                 CommandMessage msg = new CommandMessage((int)CommandEnum.ExitCommand);
                 string output = JsonConvert.SerializeObject(msg);
                 writer.WriteLine(output);
+                client.GetStream().Close(); // Close the stream
+                client.Close(); // Close the client
             }
             server.Stop();
         }

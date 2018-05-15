@@ -29,7 +29,6 @@ namespace ImageServiceGUI
             if (c.Connect()) // Connected to server.
             {
                 c.Start();
-                c.GetSettings();
             } 
             else  // Not Connected
             {
