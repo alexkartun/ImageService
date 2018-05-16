@@ -14,6 +14,7 @@ namespace ImageServiceGUI
 		{
 			InitializeComponent();
             DataContext = new MainViewModel();
+            GuiChannel.Instance.Read();
         }
     }
 }

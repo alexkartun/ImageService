@@ -22,7 +22,7 @@ namespace ImageServiceGUI.Model
             ClientConnection.DataRecieved += OnDataRecieved;
             CommandMessage req = new CommandMessage((int) CommandEnum.GetConfigCommand);
             ClientConnection.Write(req);
-            ClientConnection.Read();
+            //ClientConnection.Read();
         }
 
         public GuiChannel ClientConnection

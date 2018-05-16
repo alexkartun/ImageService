@@ -23,28 +23,23 @@ namespace ImageService.Communication
             {
                 try
                 {
+                    NetworkStream stream = client.GetStream();
+                    StreamReader reader = new StreamReader(stream);
                     while (true)
                     {
-                        NetworkStream stream = client.GetStream();
-                        StreamReader reader = new StreamReader(stream);
                         string commandLine = reader.ReadLine();
                         CommandMessage cmd = JsonConvert.DeserializeObject<CommandMessage>(commandLine);
-                        if (cmd.Command == (int)CommandEnum.ExitCommand)
-                        {
-                            // Client want to exit
-                            ExitRecieved(this, new CommandRecievedEventArgs((int)CommandEnum.ExitCommand, null, client));
-                            break;
-                        }
                         CommandRecieved(this, new CommandRecievedEventArgs(cmd.Command, cmd.Args, client));
                     }
-                    
+
                 }
                 // Connection error with client occurred.
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
+                    ExitRecieved(this, new CommandRecievedEventArgs((int)CommandEnum.ExitCommand, null, client));
                 }
-            }).Start();
+            }).Start();       
         }
     }
 

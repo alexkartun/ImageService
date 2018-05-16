@@ -14,7 +14,7 @@ namespace ImageServiceGUI.Communication
     public class GuiChannel
     {
         private static string ip = "127.0.0.1";
-        private static string port = "8000";
+        private static string port = "8001";
         private static GuiChannel instance = null;
         private TcpClient client;
 
@@ -63,7 +63,6 @@ namespace ImageServiceGUI.Communication
         {
             try
             {
-                Write(new CommandMessage((int) CommandEnum.ExitCommand));
                 client.Close();
                 isConnected = false;
             }
@@ -79,19 +78,19 @@ namespace ImageServiceGUI.Communication
             {
                 try
                 {
+                    NetworkStream stream = client.GetStream();
+                    StreamReader reader = new StreamReader(stream);
                     while (isConnected)
                     {
-                        NetworkStream stream = client.GetStream();
-                        StreamReader reader = new StreamReader(stream);
                         string output = reader.ReadLine();
                         CommandMessage msg = JsonConvert.DeserializeObject<CommandMessage>(output);
-                        if (msg.Command == (int) CommandEnum.ExitCommand)
+                        if (msg.Command == (int)CommandEnum.ExitCommand)
                         {
                             Disconnect();
                             break;
                         }
                         DataRecieved?.Invoke(this, new CommandRecievedEventArgs(msg.Command, msg.Args));
-                        //Thread.Sleep(250);
+                        Thread.Sleep(250);
                     }
                 }
                 catch (Exception e)

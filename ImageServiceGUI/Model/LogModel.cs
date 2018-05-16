@@ -27,7 +27,7 @@ namespace ImageServiceGUI.Model
             BindingOperations.EnableCollectionSynchronization(service_logs, thisLock);
             CommandMessage req = new CommandMessage((int)CommandEnum.LogCommand);
             ClientConnection.Write(req);
-            ClientConnection.Read();
+            //ClientConnection.Read();
         }
 
         public GuiChannel ClientConnection

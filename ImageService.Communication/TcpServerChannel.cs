@@ -14,10 +14,10 @@ namespace ImageService.Communication
     public class TcpServerChannel
     {
         private static string ip = "127.0.0.1";
-        private static string port = "8000";
+        private static string port = "8001";
         private TcpListener server;
         private List<TcpClient> clients;
-
+        private volatile bool server_status;
         private ClientHandler handler;
         public ClientHandler Client_Handler { get { return handler;  } }
 
@@ -26,31 +26,34 @@ namespace ImageService.Communication
             clients = new List<TcpClient>();
             handler = new ClientHandler();
             handler.ExitRecieved += OnExitRecieved;
+            server_status = true;
         }
 
         public void OnExitRecieved(object sender, CommandRecievedEventArgs args)
         {
-            clients.Remove(args.Client_Socket);
-            args.Client_Socket.Close();
+            if (server_status)
+                clients.Remove(args.Client_Socket);
         }
 
         public void SendCommandBroadCast(CommandMessage msg)
         {
-            try
+            
+            string output = JsonConvert.SerializeObject(msg);
+            foreach (TcpClient client in clients)
             {
-                string output = JsonConvert.SerializeObject(msg);
-                foreach (TcpClient client in clients)
+                try
                 {
                     NetworkStream stream = client.GetStream();
                     StreamWriter writer = new StreamWriter(stream);
                     writer.WriteLine(output);
                     writer.Flush();
                 }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            
         }
 
         public void Start()
@@ -71,6 +74,7 @@ namespace ImageService.Communication
                     catch (SocketException e)
                     {
                         Console.WriteLine(e.Message);
+                        server_status = false;
                         break;
                     }
                 }
@@ -80,16 +84,10 @@ namespace ImageService.Communication
 
         public void Stop()
         {
+            server.Stop();
             // Send for every client to exit.
             CommandMessage msg = new CommandMessage((int)CommandEnum.ExitCommand);
             SendCommandBroadCast(msg);
-
-            foreach (TcpClient client in clients)
-            {
-                client.Close();
-            }
-
-            server.Stop();
         }
     }
 }

@@ -58,6 +58,7 @@ namespace ImageService
             ISettingsModal settings_modal = new SettingsModal(eventSourceName, logName, output_dir_path, thumbnail_size);
             IImageController controller = new ImageController(image_modal, logs_modal, settings_modal, close_modal);
             image_server = new ImageServer(image_logger, controller);
+            //image_server.Start();
 		}
 
         [DllImport("advapi32.dll", SetLastError = true)]
