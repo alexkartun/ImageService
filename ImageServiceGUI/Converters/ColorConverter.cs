@@ -12,7 +12,7 @@ namespace ImageServiceGUI.Converters
 {
     class ColorConverter : IValueConverter
     {
-
+		// Coupling logging message with appropriate background.
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (targetType != typeof(Brush))

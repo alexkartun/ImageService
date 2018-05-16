@@ -39,7 +39,7 @@ namespace ImageServiceGUI.Model
                 NotifyPropertyChanged("Type");
             }
         }
-
+		// TODO: check INOTIFY relevance.
         public void NotifyPropertyChanged(string propName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));

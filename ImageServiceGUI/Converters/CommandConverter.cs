@@ -25,7 +25,7 @@ namespace ImageServiceGUI.Converters
             {
                 LogsRecieved(this, new CommandRecievedEventArgs(msg.Command, msg.Args));
             }
-            else // Exit recieved from server.
+            else // Exit recieved from service.
             {
                 return false;
             }

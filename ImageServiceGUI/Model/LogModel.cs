@@ -26,6 +26,7 @@ namespace ImageServiceGUI.Model
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
+		//recieve from command converter
         public void OnLogsRecieved(object sender, CommandRecievedEventArgs a)
         {
             UpdateLogs(a.Args);

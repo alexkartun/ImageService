@@ -51,6 +51,7 @@ namespace ImageServiceGUI.Communication
 
         public void Start()
         {
+			// listening to server calls.
             new Task(() =>
             {
                 try

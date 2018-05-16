@@ -28,8 +28,8 @@ namespace ImageServiceGUI.Model
             {
                 SetSettings(a.Args);
             }
-            else // Command is remove handler.
-            {
+            else if (a.Command == (int)CommandEnum.CloseCommand)
+			{
                 RemoveHandler(a.Args[0]);
             }
         }
@@ -39,6 +39,8 @@ namespace ImageServiceGUI.Model
             directory_handlers.Remove(directory);
         }
 
+
+		// recieves args from 
         private void SetSettings(string[] args)
         {
             OutputDir = args[0];
@@ -47,7 +49,7 @@ namespace ImageServiceGUI.Model
             ThumbnailSize = args[3];
             for (int i = 4; i < args.Length; i++)
             {
-                directory_handlers.Add(args[i]);
+                DirectoryHandlers.Add(args[i]);
             }
         }
 
