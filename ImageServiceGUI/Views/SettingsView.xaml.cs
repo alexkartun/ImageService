@@ -13,8 +13,7 @@ namespace ImageServiceGUI.Views
         public SettingsView()
         {
             InitializeComponent();
-            GuiChannel c = GuiChannel.Instance;
-            DataContext = new SettingsViewModel(new SettingsModel(c));
+            DataContext = new SettingsViewModel();
         }
     }
 }

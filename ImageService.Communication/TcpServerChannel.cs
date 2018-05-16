@@ -17,31 +17,39 @@ namespace ImageService.Communication
         private static string port = "8000";
         private TcpListener server;
         private List<TcpClient> clients;
-        public ClientHandler Client_Handler { get; }
+
+        private ClientHandler handler;
+        public ClientHandler Client_Handler { get { return handler;  } }
 
         public TcpServerChannel()
         {
             clients = new List<TcpClient>();
-            Client_Handler = new ClientHandler();
-            Client_Handler.ExitRecieved += OnExitRecieved;
+            handler = new ClientHandler();
+            handler.ExitRecieved += OnExitRecieved;
         }
 
         public void OnExitRecieved(object sender, CommandRecievedEventArgs args)
         {
             clients.Remove(args.Client_Socket);
+            args.Client_Socket.Close();
         }
 
         public void SendCommandBroadCast(CommandMessage msg)
         {
-            string output = JsonConvert.SerializeObject(msg);
-            foreach (TcpClient client in clients)
+            try
             {
-                NetworkStream stream = client.GetStream();
-                StreamWriter writer = new StreamWriter(stream)
+                string output = JsonConvert.SerializeObject(msg);
+                foreach (TcpClient client in clients)
                 {
-                    AutoFlush = true
-                };
-                writer.WriteLine(output);
+                    NetworkStream stream = client.GetStream();
+                    StreamWriter writer = new StreamWriter(stream);
+                    writer.WriteLine(output);
+                    writer.Flush();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
 
@@ -58,10 +66,11 @@ namespace ImageService.Communication
                     {
                         TcpClient client = server.AcceptTcpClient();
                         clients.Add(client);
-                        Client_Handler.HandleClient(client);
+                        handler.HandleClient(client);
                     }
-                    catch (SocketException)
+                    catch (SocketException e)
                     {
+                        Console.WriteLine(e.Message);
                         break;
                     }
                 }
@@ -72,20 +81,14 @@ namespace ImageService.Communication
         public void Stop()
         {
             // Send for every client to exit.
+            CommandMessage msg = new CommandMessage((int)CommandEnum.ExitCommand);
+            SendCommandBroadCast(msg);
+
             foreach (TcpClient client in clients)
             {
-                // Service stopping
-                NetworkStream stream = client.GetStream();
-                StreamWriter writer = new StreamWriter(stream)
-                {
-                    AutoFlush = true
-                };
-                CommandMessage msg = new CommandMessage((int)CommandEnum.ExitCommand);
-                string output = JsonConvert.SerializeObject(msg);
-                writer.WriteLine(output);
-                client.GetStream().Close(); // Close the stream
-                client.Close(); // Close the client
+                client.Close();
             }
+
             server.Stop();
         }
     }

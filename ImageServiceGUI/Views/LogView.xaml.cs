@@ -13,8 +13,7 @@ namespace ImageServiceGUI.Views
         public LogView()
         {
             InitializeComponent();
-            GuiChannel c = GuiChannel.Instance;
-            DataContext = new LogViewModel(new LogModel(c));
+            DataContext = new LogViewModel();
         }
     }
 }

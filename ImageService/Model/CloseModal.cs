@@ -18,7 +18,7 @@ namespace ImageService.Model
 		{
 			status = MessageTypeEnum.INFO;
 			OnClose(this, new DirectoryCloseEventArgs(args[0]));
-            return "Got command ID: " + ((int)CommandEnum.CloseCommand).ToString() + " Args: " + args[0];
+            return "Got command: " + (CommandEnum.CloseCommand).ToString() + " Args: " + args[0];
         }
     }
 }

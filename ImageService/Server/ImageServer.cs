@@ -17,11 +17,11 @@ namespace ImageService.Server
         private ILoggingService logging_service;
         private IImageController image_controller;
         private List<IDirectoryHandler> directory_handlers;
-        private TcpServerChannel server;
+        private TcpServerChannel channel;
 
         public ImageServer(ILoggingService logger, IImageController controller)
         {
-            server = new TcpServerChannel();
+            channel = new TcpServerChannel();
             image_controller = controller;
             logging_service = logger;
             directory_handlers = new List<IDirectoryHandler>();
@@ -31,14 +31,14 @@ namespace ImageService.Server
         {
             CreateHandlers();
             // Bind event to handler client component.
-            server.Client_Handler.CommandRecieved += OnCommandRecieved;
-            server.Start();
+            channel.Client_Handler.CommandRecieved += OnCommandRecieved;
+            channel.Start();
         }
 
         public void Stop()
         {
             StopHandlers();
-            server.Stop();
+            channel.Stop();
         }
 
 		private void OnCommandRecieved(object sender, CommandRecievedEventArgs c_args)
@@ -51,8 +51,7 @@ namespace ImageService.Server
             image_controller.LogsModal.ServiceLogs.Add(args[0]);
             image_controller.LogsModal.ServiceLogs.Add(args[1]);
             // Send log to all clients.
-            server.SendCommandBroadCast(new CommandMessage((int) CommandEnum.LogCommand, args));
-            
+            channel.SendCommandBroadCast(new CommandMessage((int) CommandEnum.LogCommand, args));       
 		}
 			
         /// <summary>
@@ -78,7 +77,7 @@ namespace ImageService.Server
             image_controller.SettingsModal.Directory_Paths.Remove(close_args.DirectoryPath);
             // Update all clients.
             string[] args = { close_args.DirectoryPath };
-            server.SendCommandBroadCast(new CommandMessage((int)CommandEnum.CloseCommand, args));
+            channel.SendCommandBroadCast(new CommandMessage((int)CommandEnum.CloseCommand, args));
         }
 
         /// <summary>
@@ -92,7 +91,7 @@ namespace ImageService.Server
                 directory.StopHandleDirectory();
             }
             // Update all clients that server is closing.
-            server.SendCommandBroadCast(new CommandMessage((int)CommandEnum.ExitCommand));
+            channel.SendCommandBroadCast(new CommandMessage((int)CommandEnum.ExitCommand));
 			//TODO: check observeable pattern.
         }
 

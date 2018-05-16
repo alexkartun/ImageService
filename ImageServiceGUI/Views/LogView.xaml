@@ -16,12 +16,12 @@
                 <DataGrid Name="DataGrid" ItemsSource="{Binding VM_ServiceLogs}" IsReadOnly="True" CanUserAddRows="False"
                           CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False"
                           CanUserSortColumns="False" AutoGenerateColumns="False" IsHitTestVisible="False" Focusable="False" 
-                          ScrollViewer.CanContentScroll="True" VerticalScrollBarVisibility="Visible" RowHeight="55" ColumnWidth="120">
+                          ScrollViewer.CanContentScroll="True" VerticalScrollBarVisibility="Visible" RowHeight="30" ColumnWidth="120">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="Auto" IsReadOnly="True">
+                        <DataGridTextColumn Header="Type" Binding="{Binding Status}" Width="Auto" IsReadOnly="True">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="Background" Value="{Binding Type, Converter={StaticResource ResourceKey=ColorConverter}}" />
+                                    <Setter Property="Background" Value="{Binding Status, Converter={StaticResource ResourceKey=ColorConverter}}" />
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>

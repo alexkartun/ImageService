@@ -1,11 +1,11 @@
-﻿using ImageService.Communication;
-using ImageService.Communication.Model;
+﻿using ImageService.Communication.Model;
 using ImageService.Infastructure.Enums;
-using ImageServiceGUI.Converters;
+using ImageService.Infastructure.Event;
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,17 +13,24 @@ namespace ImageServiceGUI.Communication
 {
     public class GuiChannel
     {
+        private static string ip = "127.0.0.1";
+        private static string port = "8000";
         private static GuiChannel instance = null;
-        private TcpClientChannel tcp_channel;
-        private volatile Boolean stop;
+        private TcpClient client;
 
-        public CommandConverter Converter { get; set; }
+        public event EventHandler<CommandRecievedEventArgs> DataRecieved;
+
+
         private GuiChannel()
         {
-            tcp_channel = new TcpClientChannel();
-            Converter = new CommandConverter();
-            stop = false;
+            client = new TcpClient();
+            isConnected = Connect();
         }
+
+        private bool isConnected;
+
+        public bool IsConnected => isConnected;
+        public void SetIsConnected(bool value) => isConnected = value;
 
         public static GuiChannel Instance
         {
@@ -39,46 +46,76 @@ namespace ImageServiceGUI.Communication
 
         public Boolean Connect()
         {
-            return tcp_channel.Connect();
+            try
+            {
+                IPEndPoint ep = new IPEndPoint(IPAddress.Parse(ip), Int32.Parse(port));
+                client.Connect(ep);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
         }
 
         public void Disconnect()
         {
-            stop = true;
-            SendMessage(new CommandMessage((int) CommandEnum.ExitCommand));
-            tcp_channel.Disconnect();
+            try
+            {
+                Write(new CommandMessage((int) CommandEnum.ExitCommand));
+                client.Close();
+                isConnected = false;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
-        public void Start()
+        public void Read()
         {
-			// listening to server calls.
-            new Task(() =>
+            Task t = new Task(() =>
             {
                 try
                 {
-                    while (!stop)
+                    while (isConnected)
                     {
-                        CommandMessage m = GetMessage();
-                        if (!Converter.Convert(m)) // Service stopped.
+                        NetworkStream stream = client.GetStream();
+                        StreamReader reader = new StreamReader(stream);
+                        string output = reader.ReadLine();
+                        CommandMessage msg = JsonConvert.DeserializeObject<CommandMessage>(output);
+                        if (msg.Command == (int) CommandEnum.ExitCommand)
                         {
-                            stop = true;
-                            tcp_channel.Disconnect();
+                            Disconnect();
+                            break;
                         }
-                        Thread.Sleep(250);
+                        DataRecieved?.Invoke(this, new CommandRecievedEventArgs(msg.Command, msg.Args));
+                        //Thread.Sleep(250);
                     }
                 }
-                catch (Exception) { }
-            }).Start();
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            });
+            t.Start();
         }
 
-        public void SendMessage(CommandMessage m)
+        public void Write(CommandMessage msg)
         {
-            tcp_channel.SendMessage(m);
-        }
-
-        public CommandMessage GetMessage()
-        {
-            return tcp_channel.GetMessage();
+            try
+            {
+                NetworkStream stream = client.GetStream();
+                StreamWriter writer = new StreamWriter(stream);
+                string input = JsonConvert.SerializeObject(msg);
+                writer.WriteLine(input);
+                writer.Flush();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
     }
 }

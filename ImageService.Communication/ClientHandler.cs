@@ -23,33 +23,26 @@ namespace ImageService.Communication
             {
                 try
                 {
-                    using (NetworkStream stream = client.GetStream())
-                    using (StreamReader reader = new StreamReader(stream))
+                    while (true)
                     {
-                        CommandRecieved(this, new CommandRecievedEventArgs((int) CommandEnum.GetConfigCommand, null, client));
-                        CommandRecieved(this, new CommandRecievedEventArgs((int) CommandEnum.LogCommand, null, client));
-                        while (true)
+                        NetworkStream stream = client.GetStream();
+                        StreamReader reader = new StreamReader(stream);
+                        string commandLine = reader.ReadLine();
+                        CommandMessage cmd = JsonConvert.DeserializeObject<CommandMessage>(commandLine);
+                        if (cmd.Command == (int)CommandEnum.ExitCommand)
                         {
-                            string commandLine = reader.ReadLine();
-                            CommandMessage cmd = JsonConvert.DeserializeObject<CommandMessage>(commandLine);
-                            if (cmd.Command == (int) CommandEnum.ExitCommand)
-                            {
-                                // Client want to exit.
-                                break;
-                            }
-                            CommandRecieved(this, new CommandRecievedEventArgs(cmd.Command, cmd.Args, client));
+                            // Client want to exit
+                            ExitRecieved(this, new CommandRecievedEventArgs((int)CommandEnum.ExitCommand, null, client));
+                            break;
                         }
+                        CommandRecieved(this, new CommandRecievedEventArgs(cmd.Command, cmd.Args, client));
                     }
+                    
                 }
-                // Error writing to client occurred, need to remove him from the list of clients.
-                catch (Exception)
+                // Connection error with client occurred.
+                catch (Exception e)
                 {
-                    // Error
-                }
-                finally
-                {
-                    client.Close();
-                    ExitRecieved(this, new CommandRecievedEventArgs((int)CommandEnum.ExitCommand, null, client));
+                    Console.WriteLine(e.Message);
                 }
             }).Start();
         }

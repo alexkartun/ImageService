@@ -62,7 +62,7 @@ namespace ImageService.Model
 			{
 				result = MessageTypeEnum.FAIL;
 			}
-            return "Got command ID: " + ((int) CommandEnum.NewFileCommand).ToString() + " Args: " + args[0] + ", " + args[1];
+            return "Got command: " + (CommandEnum.NewFileCommand).ToString() + " Args: " + args[0] + ", " + args[1];
 		}
 
 		/// <summary>

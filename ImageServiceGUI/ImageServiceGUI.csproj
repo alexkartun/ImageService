@@ -77,9 +77,8 @@
     </ApplicationDefinition>
     <Compile Include="Communication\GuiChannel.cs" />
     <Compile Include="Converters\ColorConverter.cs" />
-    <Compile Include="Converters\CommandConverter.cs" />
-    <Compile Include="Model\Log.cs" />
     <Compile Include="ViewModel\LogViewModel.cs" />
+    <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\SettingsViewModel.cs" />
     <Compile Include="Views\LogView.xaml.cs">
       <DependentUpon>LogView.xaml</DependentUpon>

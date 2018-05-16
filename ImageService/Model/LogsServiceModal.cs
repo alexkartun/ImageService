@@ -2,9 +2,11 @@
 using ImageService.Infastructure.Enums;
 using ImageService.Logging.Model;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace ImageService.Model
 {
@@ -20,16 +22,22 @@ namespace ImageService.Model
 
         public string GetAllLog(out MessageTypeEnum result, TcpClient client)
         {
+            result = MessageTypeEnum.INFO;
             CommandMessage msg = new CommandMessage((int)CommandEnum.LogCommand, ServiceLogs.ToArray());
             string output = JsonConvert.SerializeObject(msg);
-            NetworkStream stream = client.GetStream();
-            StreamWriter writer = new StreamWriter(stream)
+            try
             {
-                AutoFlush = true
-            };
-            writer.WriteLine(output);
-			result = MessageTypeEnum.INFO;
-			return "Got command ID: " + ((int)CommandEnum.LogCommand).ToString() + " Args: ";
+                NetworkStream stream = client.GetStream();
+                StreamWriter writer = new StreamWriter(stream);
+                writer.WriteLine(output);
+                writer.Flush();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                result = MessageTypeEnum.FAIL;
+            }
+            return "Got command: " + (CommandEnum.LogCommand).ToString() + " Args: ";
         }
         
 

@@ -6,6 +6,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Windows.Data;
 
 namespace ImageServiceGUI.Model
 {
@@ -13,16 +14,26 @@ namespace ImageServiceGUI.Model
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private GuiChannel channel;
-
-        public SettingsModel(GuiChannel c)
+        public SettingsModel()
         {
-            channel = c;
             directory_handlers = new ObservableCollection<String>();
-            channel.Converter.SettingsRecieved += OnSettingsRecieved;
+            Object thisLock = new Object();
+            BindingOperations.EnableCollectionSynchronization(directory_handlers, thisLock);
+            ClientConnection.DataRecieved += OnDataRecieved;
+            CommandMessage req = new CommandMessage((int) CommandEnum.GetConfigCommand);
+            ClientConnection.Write(req);
+            ClientConnection.Read();
         }
 
-        public void OnSettingsRecieved(object sender, CommandRecievedEventArgs a)
+        public GuiChannel ClientConnection
+        {
+            get
+            {
+                return GuiChannel.Instance;
+            }
+        }
+
+        public void OnDataRecieved(object sender, CommandRecievedEventArgs a)
         {
             if (a.Command == (int) CommandEnum.GetConfigCommand)
             {
@@ -30,13 +41,8 @@ namespace ImageServiceGUI.Model
             }
             else if (a.Command == (int)CommandEnum.CloseCommand)
 			{
-                RemoveHandler(a.Args[0]);
+                DirectoryHandlers.Remove(a.Args[0]);
             }
-        }
-
-        private void RemoveHandler(string directory)
-        {
-            directory_handlers.Remove(directory);
         }
 
 

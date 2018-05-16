@@ -12,5 +12,18 @@ namespace ImageService.Logging.Model
             Message = msg;
             Status = st;
         }
+
+        public static MessageTypeEnum GetTypeEnum(int t)
+        {
+            if (t == 0)
+            {
+                return MessageTypeEnum.INFO;
+            }
+            else if (t == 1)
+            {
+                return MessageTypeEnum.WARNING;
+            }
+            return MessageTypeEnum.FAIL;
+        }
     }
 }

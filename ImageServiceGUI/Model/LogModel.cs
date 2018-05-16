@@ -1,4 +1,7 @@
-﻿using ImageService.Infastructure.Event;
+﻿using ImageService.Communication.Model;
+using ImageService.Infastructure.Enums;
+using ImageService.Infastructure.Event;
+using ImageService.Logging.Model;
 using ImageServiceGUI.Communication;
 using System;
 using System.Collections.Generic;
@@ -7,18 +10,32 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Data;
 
 namespace ImageServiceGUI.Model
 {
     public class LogModel : INotifyPropertyChanged
     {
-        private GuiChannel channel;
+
         public event PropertyChangedEventHandler PropertyChanged;
-        public LogModel(GuiChannel c)
+
+        public LogModel()
         {
-            channel = c;
-            ServiceLogs = new ObservableCollection<Log>();
-            channel.Converter.LogsRecieved += OnLogsRecieved;
+            ClientConnection.DataRecieved += OnDataRecieved;
+            service_logs = new ObservableCollection<MessageRecievedEventArgs>();
+            Object thisLock = new Object();
+            BindingOperations.EnableCollectionSynchronization(service_logs, thisLock);
+            CommandMessage req = new CommandMessage((int)CommandEnum.LogCommand);
+            ClientConnection.Write(req);
+            ClientConnection.Read();
+        }
+
+        public GuiChannel ClientConnection
+        {
+            get
+            {
+                return GuiChannel.Instance;
+            }
         }
 
         public void NotifyPropertyChanged(string propName)
@@ -27,22 +44,27 @@ namespace ImageServiceGUI.Model
         }
 
 		//recieve from command converter
-        public void OnLogsRecieved(object sender, CommandRecievedEventArgs a)
+        public void OnDataRecieved(object sender, CommandRecievedEventArgs a)
         {
-            UpdateLogs(a.Args);
+            if (a.Command == (int) CommandEnum.LogCommand)
+            {
+                UpdateLogs(a.Args);
+            }
         }
 
         private void UpdateLogs(string[] logs)
         {
             for (int i = 0; i < logs.Length; i += 2)
             {
-                Log log = new Log(logs[i], Int32.Parse(logs[i + 1]));
-                service_logs.Add(log);
+                string m = logs[i];
+                MessageTypeEnum t = MessageRecievedEventArgs.GetTypeEnum(Int32.Parse(logs[i + 1]));
+                MessageRecievedEventArgs log = new MessageRecievedEventArgs(m, t);
+                ServiceLogs.Add(log);
             }
         }
 
-        private ObservableCollection<Log> service_logs;
-        public ObservableCollection<Log> ServiceLogs
+        private ObservableCollection<MessageRecievedEventArgs> service_logs;
+        public ObservableCollection<MessageRecievedEventArgs> ServiceLogs
         {
             get { return service_logs; }
             set

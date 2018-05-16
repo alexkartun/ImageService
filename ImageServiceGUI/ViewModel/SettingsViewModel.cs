@@ -15,9 +15,9 @@ namespace ImageServiceGUI.ViewModel
         private SettingsModel sett_model;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public SettingsViewModel(SettingsModel m)
+        public SettingsViewModel()
         {
-            sett_model = m;
+            sett_model = new SettingsModel();
             sett_model.PropertyChanged +=
                 delegate (Object sender, PropertyChangedEventArgs e)
                 {

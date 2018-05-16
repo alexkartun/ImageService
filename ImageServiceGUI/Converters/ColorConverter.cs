@@ -15,17 +15,13 @@ namespace ImageServiceGUI.Converters
 		// Coupling logging message with appropriate background.
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (targetType != typeof(Brush))
-            {
-                throw new InvalidOperationException("Must convert to a brush!");
-            }
-            int type = (int) value;
-            if (type == (int) MessageTypeEnum.INFO)
-                return Brushes.Green;
-            else if (type == (int)MessageTypeEnum.WARNING)
-                return Brushes.Yellow;
+            MessageTypeEnum type = (MessageTypeEnum) value;
+            if (type == MessageTypeEnum.INFO)
+                return "Green";
+            else if (type == MessageTypeEnum.WARNING)
+                return "Yellow";
             else
-                return Brushes.Red;
+                return "Red";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

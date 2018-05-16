@@ -3,14 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:controls="clr-namespace:ImageServiceGUI.Views"
-        Closing="OnWindowClosing"
-        
+        xmlns:controls="clr-namespace:ImageServiceGUI.Views"      
         mc:Ignorable="d"
-        Title="Image App" Height="600" Width="800" Background="AntiqueWhite">
-    <StackPanel>
-		<Image Source="srcImg/title.png" />
-		<TabControl>
+        Title="Image App" Height="400" Width="800" Background="AntiqueWhite">
+    <StackPanel Background="{Binding IsConnected}">
+        <TabControl>
 			<TabItem Header="Settings">
                 <controls:SettingsView/>
             </TabItem>

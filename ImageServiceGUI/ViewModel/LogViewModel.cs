@@ -1,4 +1,5 @@
-﻿using ImageServiceGUI.Communication;
+﻿using ImageService.Logging.Model;
+using ImageServiceGUI.Communication;
 using ImageServiceGUI.Model;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,9 @@ namespace ImageServiceGUI.ViewModel
 
         private LogModel model;
 
-        public LogViewModel(LogModel m)
+        public LogViewModel()
         {
-            model = m;
+            model = new LogModel();
             model.PropertyChanged +=
                 delegate (Object sender, PropertyChangedEventArgs e)
                 {
@@ -31,7 +32,7 @@ namespace ImageServiceGUI.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
-        public ObservableCollection<Log> VM_ServiceLogs
+        public ObservableCollection<MessageRecievedEventArgs> VM_ServiceLogs
         {
             get { return model.ServiceLogs; }
         }

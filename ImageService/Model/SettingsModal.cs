@@ -2,10 +2,12 @@
 using ImageService.Infastructure.Enums;
 using ImageService.Logging.Model;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace ImageService.Model
 {
@@ -34,13 +36,19 @@ namespace ImageService.Model
             string[] args = service_data.Union(dir_paths).ToArray();
             CommandMessage msg = new CommandMessage((int) CommandEnum.GetConfigCommand, args);
             string output = JsonConvert.SerializeObject(msg);
-            NetworkStream stream = client.GetStream();
-            StreamWriter writer = new StreamWriter(stream)
+            try
             {
-                AutoFlush = true
-            };
-            writer.WriteLine(output);
-            return "Got command ID: " + ((int)CommandEnum.GetConfigCommand).ToString() + " Args: ";
+                NetworkStream stream = client.GetStream();
+                StreamWriter writer = new StreamWriter(stream);
+                writer.WriteLine(output);
+                writer.Flush();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                result = MessageTypeEnum.FAIL;
+            }
+            return "Got command: " + (CommandEnum.GetConfigCommand).ToString() + " Args: ";
         }
     }
 }
