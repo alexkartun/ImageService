@@ -2,6 +2,7 @@
 using ImageService.Infastructure.Enums;
 using ImageService.Infastructure.Event;
 using ImageServiceGUI.Communication;
+using Prism.Commands;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -45,6 +46,12 @@ namespace ImageServiceGUI.Model
             }
         }
 
+
+        public void RemoveHandler(string handler)
+        {
+            CommandMessage req = new CommandMessage((int)CommandEnum.CloseCommand, new string[] { handler });
+            ClientConnection.Write(req);
+        }
 
 		// recieves args from 
         private void SetSettings(string[] args)

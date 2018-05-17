@@ -1,12 +1,9 @@
-﻿using ImageServiceGUI.Communication;
-using ImageServiceGUI.Model;
+﻿using ImageServiceGUI.Model;
+using Prism.Commands;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace ImageServiceGUI.ViewModel
 {
@@ -23,6 +20,21 @@ namespace ImageServiceGUI.ViewModel
                 {
                     NotifyPropertyChanged("VM_" + e.PropertyName);
                 };
+            RemoveCommand = new DelegateCommand<object>(OnRemove, CanRemove);
+        }
+
+        private void OnRemove(object obj)
+        {
+            sett_model.RemoveHandler(selected_path);
+        }
+
+        private bool CanRemove(object obj)
+        {
+            if(string.IsNullOrEmpty(selected_path))
+            {
+                return false;
+            }
+            return true;
         }
 
         public void NotifyPropertyChanged(string propName)
@@ -49,6 +61,20 @@ namespace ImageServiceGUI.ViewModel
         {
             get { return sett_model.ThumbnailSize; }
         }
+
+        private string selected_path;
+        public string VM_SelectedPath
+        {
+            get { return selected_path; }
+            set
+            {
+                selected_path = value;
+                var command = this.RemoveCommand as DelegateCommand<object>;
+                command.RaiseCanExecuteChanged();
+            }
+        }
+
+        public ICommand RemoveCommand { get; set; }
 
         public ObservableCollection<String> VM_DirectoryHandlers
         {

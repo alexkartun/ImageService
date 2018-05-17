@@ -8,12 +8,12 @@
         Title="Image App" Height="400" Width="800" Background="AntiqueWhite">
     <StackPanel Background="{Binding IsConnected}">
         <TabControl>
-			<TabItem Header="Settings">
-                <controls:SettingsView/>
-            </TabItem>
-			<TabItem Header="Logs">
+            <TabItem Header="Logs">
                 <controls:LogView/>
             </TabItem>
-		</TabControl>
+            <TabItem Header="Settings">
+                <controls:SettingsView/>
+            </TabItem>
+        </TabControl>
 	</StackPanel>
 </Window>
