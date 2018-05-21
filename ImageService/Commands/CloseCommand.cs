@@ -13,7 +13,10 @@ namespace ImageService.Commands
             m_modal = modal;
         }
 
-        public string Execute(string[] args, out MessageTypeEnum result, TcpClient client = null)
+		/// <summary>
+		/// close command execution. closing given directory.
+		/// </summary>
+		public string Execute(string[] args, out MessageTypeEnum result, TcpClient client = null)
         {
 			return m_modal.CloseDirectory(args, out result);
         }
