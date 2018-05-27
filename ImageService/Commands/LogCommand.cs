@@ -8,12 +8,18 @@ namespace ImageService.Commands
     {
         private ILogsServiceModal m_modal;
 
-        public LogCommand(ILogsServiceModal modal)
+		/// <summary>
+		/// log command constructor. ref to log service modal is given.
+		/// </summary>
+		public LogCommand(ILogsServiceModal modal)
         {
             m_modal = modal;
         }
-     
-        public string Execute(string[] args, out MessageTypeEnum result, TcpClient client = null)
+
+		/// <summary>
+		/// log command execution. A method which summons all logs via TCP is called.
+		/// </summary>
+		public string Execute(string[] args, out MessageTypeEnum result, TcpClient client = null)
         {
             return m_modal.GetAllLog(out result, client);
         }

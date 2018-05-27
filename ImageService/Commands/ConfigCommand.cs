@@ -7,13 +7,18 @@ namespace ImageService.Commands
     class ConfigCommand : ICommand
     {
         private ISettingsModal m_modal;
-
-        public ConfigCommand(ISettingsModal modal)
+		/// <summary>
+		/// configuration command constructor. ref to setting modal is given.
+		/// </summary>
+		public ConfigCommand(ISettingsModal modal)
         {
             m_modal = modal;
         }
 
-        public string Execute(string[] args, out MessageTypeEnum result, TcpClient client = null)
+		/// <summary>
+		/// Config command execution. "GetSetting" method from modal is called.
+		/// </summary>
+		public string Execute(string[] args, out MessageTypeEnum result, TcpClient client = null)
         {
             return m_modal.GetSettings(out result, client);
         }

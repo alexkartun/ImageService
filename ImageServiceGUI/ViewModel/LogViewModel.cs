@@ -32,6 +32,7 @@ namespace ImageServiceGUI.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
+		// Binded to logs list on view.
         public ObservableCollection<MessageRecievedEventArgs> VM_ServiceLogs
         {
             get { return model.ServiceLogs; }

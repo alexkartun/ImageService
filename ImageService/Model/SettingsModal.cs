@@ -31,8 +31,11 @@ namespace ImageService.Model
         public string GetSettings(out MessageTypeEnum result, TcpClient client)
         {
             result = MessageTypeEnum.INFO;
+			// Static string type array holding APPCONFIG settings.
             string[] service_data = { output_directory, source_name, log_name, thumbnail_size };
-            string[] dir_paths = Directory_Paths.ToArray();
+			// Dynamic string type array (unfixed number of dirs) holding all active directory handlers. 
+			string[] dir_paths = Directory_Paths.ToArray();
+			// Union those to strig arrays.
             string[] args = service_data.Union(dir_paths).ToArray();
             CommandMessage msg = new CommandMessage((int) CommandEnum.GetConfigCommand, args);
             string output = JsonConvert.SerializeObject(msg);

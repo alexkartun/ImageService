@@ -74,9 +74,11 @@ namespace ImageServiceGUI.ViewModel
             }
         }
 
-        public ICommand RemoveCommand { get; set; }
+		// Binded to "Remove" button on Settings view.
+		public ICommand RemoveCommand { get; set; }
 
-        public ObservableCollection<String> VM_DirectoryHandlers
+		// Binded to directory path handlers list on Settings view.
+		public ObservableCollection<String> VM_DirectoryHandlers
         {
             get { return sett_model.DirectoryHandlers; }
         }

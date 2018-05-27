@@ -8,7 +8,10 @@ namespace ImageService.Commands
     {
         private IImageServiceModal m_modal;
 
-        public NewFileCommand(IImageServiceModal modal)
+		/// <summary>
+		/// newfile command constructor. ref to image service modal is given.
+		/// </summary>
+		public NewFileCommand(IImageServiceModal modal)
         {
             m_modal = modal;
         }

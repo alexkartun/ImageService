@@ -19,11 +19,12 @@ namespace ImageServiceGUI.Model
         {
             directory_handlers = new ObservableCollection<String>();
             Object thisLock = new Object();
-            BindingOperations.EnableCollectionSynchronization(directory_handlers, thisLock);
+			// For data-binding on concurrent tasks.
+			BindingOperations.EnableCollectionSynchronization(directory_handlers, thisLock);
             ClientConnection.DataRecieved += OnDataRecieved;
-            CommandMessage req = new CommandMessage((int) CommandEnum.GetConfigCommand);
+			// Gets all settings from server and writes it on client GUI.
+			CommandMessage req = new CommandMessage((int) CommandEnum.GetConfigCommand);
             ClientConnection.Write(req);
-            //ClientConnection.Read();
         }
 
         public GuiChannel ClientConnection

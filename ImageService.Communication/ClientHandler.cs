@@ -19,6 +19,9 @@ namespace ImageService.Communication
 
         public void HandleClient(TcpClient client)
         {
+			// Establishes a connection from client to server.
+			// Via this connections commands will be received from server.
+			// Then, a notification to "CommandRecieved" listener (ImageService server) will be sent.
             new Task(() =>
             {
                 try

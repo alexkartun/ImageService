@@ -28,16 +28,20 @@ namespace ImageService.Communication
             handler.ExitRecieved += OnExitRecieved;
             server_status = true;
         }
-
+		/// <summary>
+		/// Removes a client from clients list.
+		/// </summary>
         public void OnExitRecieved(object sender, CommandRecievedEventArgs args)
         {
             if (server_status)
                 clients.Remove(args.Client_Socket);
         }
 
-        public void SendCommandBroadCast(CommandMessage msg)
+		/// <summary>
+		/// Sends command message to all active clients.
+		/// </summary>
+		public void SendCommandBroadCast(CommandMessage msg)
         {
-            
             string output = JsonConvert.SerializeObject(msg);
             foreach (TcpClient client in clients)
             {
@@ -58,9 +62,11 @@ namespace ImageService.Communication
 
         public void Start()
         {
+			// Server end-point declaration.
             IPEndPoint ep = new IPEndPoint(IPAddress.Parse(ip), Int32.Parse(port));
             server = new TcpListener(ep);
             server.Start();
+			// Creates all handlers and listen to all clients.
             Task task = new Task(() =>
             {
                 while (true)

@@ -92,7 +92,6 @@ namespace ImageService.Server
             }
             // Update all clients that server is closing.
             channel.SendCommandBroadCast(new CommandMessage((int)CommandEnum.ExitCommand));
-			//TODO: check observeable pattern.
         }
 
         /// <summary>

@@ -23,8 +23,10 @@ namespace ImageService.Model
         public string GetAllLog(out MessageTypeEnum result, TcpClient client)
         {
             result = MessageTypeEnum.INFO;
+			// Executes log command.
             CommandMessage msg = new CommandMessage((int)CommandEnum.LogCommand, ServiceLogs.ToArray());
-            string output = JsonConvert.SerializeObject(msg);
+			// Converts to string via Json.
+			string output = JsonConvert.SerializeObject(msg);
             try
             {
                 NetworkStream stream = client.GetStream();

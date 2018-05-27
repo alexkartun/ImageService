@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace ImageServiceGUI.Communication
 {
+	// GUI as a singleton.
     public class GuiChannel
     {
         private static string ip = "127.0.0.1";
@@ -27,9 +28,10 @@ namespace ImageServiceGUI.Communication
             isConnected = Connect();
         }
 
-        private bool isConnected;
+		private bool isConnected;
 
-        public bool IsConnected => isConnected;
+		// Binded to background of main window GUI.
+		public bool IsConnected => isConnected;
         public void SetIsConnected(bool value) => isConnected = value;
 
         public static GuiChannel Instance
@@ -44,6 +46,7 @@ namespace ImageServiceGUI.Communication
             }
         }
 
+		// Connects to ImageService server.
         public Boolean Connect()
         {
             try
@@ -72,7 +75,9 @@ namespace ImageServiceGUI.Communication
             }
         }
 
-        public void Read()
+		// Reads commands from server (one line at the time).
+		// Finishes only on ExitCommand or connection failure.
+		public void Read()
         {
             Task t = new Task(() =>
             {
@@ -101,7 +106,8 @@ namespace ImageServiceGUI.Communication
             t.Start();
         }
 
-        public void Write(CommandMessage msg)
+		// Writes a command message to server.
+		public void Write(CommandMessage msg)
         {
             try
             {

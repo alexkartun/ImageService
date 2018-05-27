@@ -13,7 +13,12 @@ namespace ImageService.Logging.Model
             Status = st;
         }
 
-        public static MessageTypeEnum GetTypeEnum(int t)
+		/// <summary>
+		/// Converts EventLogEntryType back to MessageTypeEnum (for clients logger).
+		/// </summary>
+		/// <param name="t">type</param>
+		/// <returns></returns>
+		public static MessageTypeEnum GetTypeEnum(int t)
         {
             if (t == 0)
             {

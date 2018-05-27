@@ -14,6 +14,10 @@ namespace ImageService.Model
 	{
 		public event EventHandler<DirectoryCloseEventArgs> OnClose;
 
+		/// <summary>
+		/// Closes given directory (directory path is in args).
+		/// Sends a notification to server which holds a list of all handlers (closes only given one).
+		/// </summary>
 		public string CloseDirectory(string[] args, out MessageTypeEnum status)
 		{
 			status = MessageTypeEnum.INFO;

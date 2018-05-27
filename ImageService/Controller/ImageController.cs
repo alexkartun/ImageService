@@ -24,7 +24,8 @@ namespace ImageService.Controller
             SettingsModal = settings_modal;
 			CloseModal = close_modal;
 
-            commands = new Dictionary<int, ICommand>()
+			/// Creates an enum-ICommand dictionary. 
+			commands = new Dictionary<int, ICommand>()
             {
                 { (int) CommandEnum.NewFileCommand, new NewFileCommand(ImageModal) },
                 { (int) CommandEnum.CloseCommand, new CloseCommand(CloseModal) },
@@ -32,7 +33,10 @@ namespace ImageService.Controller
                 { (int) CommandEnum.GetConfigCommand, new ConfigCommand(SettingsModal) }
             };
         }
-
+		/// <summary>
+		/// Convert commandID to ICommand type via "commands" dictionary.
+		/// Executes this command.
+		/// </summary>
 		public string ExecuteCommand(int commandID, string[] args, out MessageTypeEnum status, TcpClient client)
 		{
 			ICommand command = commands[commandID];

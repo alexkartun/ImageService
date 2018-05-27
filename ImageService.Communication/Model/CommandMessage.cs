@@ -10,9 +10,7 @@ namespace ImageService.Communication.Model
 {
     public class CommandMessage
     {
-        [JsonProperty("id")]
         public int Command { get; set; }
-        [JsonProperty("args")]
         public string[] Args { get; set; }
 
         public CommandMessage(int a_cmd, string[] a_args = null)

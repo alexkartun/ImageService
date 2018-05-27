@@ -24,10 +24,11 @@ namespace ImageServiceGUI.Model
             ClientConnection.DataRecieved += OnDataRecieved;
             service_logs = new ObservableCollection<MessageRecievedEventArgs>();
             Object thisLock = new Object();
+			// For data-binding on concurrent tasks.
             BindingOperations.EnableCollectionSynchronization(service_logs, thisLock);
+			// Gets all logs from server and writes it on client GUI.
             CommandMessage req = new CommandMessage((int)CommandEnum.LogCommand);
             ClientConnection.Write(req);
-            //ClientConnection.Read();
         }
 
         public GuiChannel ClientConnection
@@ -59,6 +60,7 @@ namespace ImageServiceGUI.Model
                 string m = logs[i];
                 MessageTypeEnum t = MessageRecievedEventArgs.GetTypeEnum(Int32.Parse(logs[i + 1]));
                 MessageRecievedEventArgs log = new MessageRecievedEventArgs(m, t);
+				// Adds a single log to an observables logs list.
                 ServiceLogs.Add(log);
             }
         }

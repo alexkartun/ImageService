@@ -7,8 +7,10 @@ namespace ImageService.Commands
     class CloseCommand : ICommand
     {
         private ICloseModal m_modal;
-
-        public CloseCommand(ICloseModal modal)
+		/// <summary>
+		/// close command constructor. ref to close modal is given.
+		/// </summary>
+		public CloseCommand(ICloseModal modal)
         {
             m_modal = modal;
         }

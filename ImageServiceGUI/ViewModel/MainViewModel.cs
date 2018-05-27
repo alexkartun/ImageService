@@ -17,8 +17,8 @@ namespace ImageServiceGUI.ViewModel
                 return GuiChannel.Instance;
             }
         }
-
-        public string IsConnected
+		// Binded to main window background color.
+		public string IsConnected
         {
             get {
                 if (ClientConnection.IsConnected) return "Green";
