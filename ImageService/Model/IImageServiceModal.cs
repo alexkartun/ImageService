@@ -1,4 +1,5 @@
 ﻿using ImageService.Logging.Model;
+using System.Net.Sockets;
 
 namespace ImageService.Model
 {

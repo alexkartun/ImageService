@@ -12,6 +12,7 @@ namespace ImageService.Infastructure.Enums
         CloseCommand,
         GetConfigCommand,
         LogCommand,
-        ExitCommand
+        ExitCommand,
+        NumberOfPhotosCommand
     }
 }

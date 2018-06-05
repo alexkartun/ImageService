@@ -19,7 +19,7 @@ namespace ImageService.Communication
         private List<TcpClient> clients;
         private volatile bool server_status;
         private ClientHandler handler;
-        public ClientHandler Client_Handler { get { return handler;  } }
+        public ClientHandler Client_Handler { get { return handler; } }
 
         public TcpServerChannel()
         {
@@ -28,19 +28,19 @@ namespace ImageService.Communication
             handler.ExitRecieved += OnExitRecieved;
             server_status = true;
         }
-		/// <summary>
-		/// Removes a client from clients list.
-		/// </summary>
+        /// <summary>
+        /// Removes a client from clients list.
+        /// </summary>
         public void OnExitRecieved(object sender, CommandRecievedEventArgs args)
         {
             if (server_status)
                 clients.Remove(args.Client_Socket);
         }
 
-		/// <summary>
-		/// Sends command message to all active clients.
-		/// </summary>
-		public void SendCommandBroadCast(CommandMessage msg)
+        /// <summary>
+        /// Sends command message to all active clients.
+        /// </summary>
+        public void SendCommandBroadCast(CommandMessage msg)
         {
             string output = JsonConvert.SerializeObject(msg);
             foreach (TcpClient client in clients)
@@ -57,16 +57,16 @@ namespace ImageService.Communication
                     Console.WriteLine(e.Message);
                 }
             }
-            
+
         }
 
         public void Start()
         {
-			// Server end-point declaration.
+            // Server end-point declaration.
             IPEndPoint ep = new IPEndPoint(IPAddress.Parse(ip), Int32.Parse(port));
             server = new TcpListener(ep);
             server.Start();
-			// Creates all handlers and listen to all clients.
+            // Creates all handlers and listen to all clients.
             Task task = new Task(() =>
             {
                 while (true)
@@ -91,9 +91,20 @@ namespace ImageService.Communication
         public void Stop()
         {
             server.Stop();
+            foreach (TcpClient client in clients)
+            {
+                try
+                {
+                    client.Close();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
             // Send for every client to exit.
-            CommandMessage msg = new CommandMessage((int)CommandEnum.ExitCommand);
-            SendCommandBroadCast(msg);
+            //CommandMessage msg = new CommandMessage((int)CommandEnum.ExitCommand);
+            //SendCommandBroadCast(msg);
         }
     }
 }

@@ -45,13 +45,17 @@ namespace ImageService.Server
 		{
             string output = image_controller.ExecuteCommand(c_args.Command, c_args.Args, out MessageTypeEnum status,
 				c_args.Client_Socket);
-			// Update eventlogger and LogsModal with new log.
-			logging_service.Log(output, status);
-            string[] args = { output, ((int)status).ToString() };
-            image_controller.LogsModal.ServiceLogs.Add(args[0]);
-            image_controller.LogsModal.ServiceLogs.Add(args[1]);
+            // Update eventlogger and LogsModal with new log.
+            if ((c_args.Command == (int)CommandEnum.NewFileCommand) ||
+                (c_args.Command == (int)CommandEnum.CloseCommand))
+            {
+                logging_service.Log(output, status);
+                string[] args = { output, ((int)status).ToString() };
+                image_controller.LogsModal.ServiceLogs.Add(args[0]);
+                image_controller.LogsModal.ServiceLogs.Add(args[1]);
+            }
             // Send log to all clients.
-            channel.SendCommandBroadCast(new CommandMessage((int) CommandEnum.LogCommand, args));       
+            //channel.SendCommandBroadCast(new CommandMessage((int) CommandEnum.LogCommand, args));       
 		}
 			
         /// <summary>
@@ -76,8 +80,8 @@ namespace ImageService.Server
             // Remove the path from the config.
             image_controller.SettingsModal.Directory_Paths.Remove(close_args.DirectoryPath);
             // Update all clients.
-            string[] args = { close_args.DirectoryPath };
-            channel.SendCommandBroadCast(new CommandMessage((int)CommandEnum.CloseCommand, args));
+            //string[] args = { close_args.DirectoryPath };
+            //channel.SendCommandBroadCast(new CommandMessage((int)CommandEnum.CloseCommand, args));
         }
 
         /// <summary>
@@ -91,7 +95,7 @@ namespace ImageService.Server
                 directory.StopHandleDirectory();
             }
             // Update all clients that server is closing.
-            channel.SendCommandBroadCast(new CommandMessage((int)CommandEnum.ExitCommand));
+            //channel.SendCommandBroadCast(new CommandMessage((int)CommandEnum.ExitCommand));
         }
 
         /// <summary>

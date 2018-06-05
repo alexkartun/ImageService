@@ -19,20 +19,12 @@ namespace ImageWebService.Communication
         private static WebChannel instance = null;
         private TcpClient client;
 
-        public event EventHandler<CommandRecievedEventArgs> DataRecieved;
-
-
         private WebChannel()
         {
             client = new TcpClient();
-            isConnected = Connect();
+            Connect();
         }
 
-        private bool isConnected;
-
-        // Binded to background of main window GUI.
-        public bool IsConnected => isConnected;
-        public void SetIsConnected(bool value) => isConnected = value;
 
         public static WebChannel Instance
         {
@@ -46,28 +38,21 @@ namespace ImageWebService.Communication
             }
         }
 
+        public bool IsConnected
+        {
+            get
+            {
+                return client.Connected;
+            }
+        }
+
         // Connects to ImageService server.
-        public Boolean Connect()
+        public void Connect()
         {
             try
             {
                 IPEndPoint ep = new IPEndPoint(IPAddress.Parse(ip), Int32.Parse(port));
                 client.Connect(ep);
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return false;
-            }
-        }
-
-        public void Disconnect()
-        {
-            try
-            {
-                client.Close();
-                isConnected = false;
             }
             catch (Exception e)
             {
@@ -77,33 +62,21 @@ namespace ImageWebService.Communication
 
         // Reads commands from server (one line at the time).
         // Finishes only on ExitCommand or connection failure.
-        public void Read()
+        public CommandMessage Read()
         {
-            Task t = new Task(() =>
+            try
             {
-                try
-                {
-                    NetworkStream stream = client.GetStream();
-                    StreamReader reader = new StreamReader(stream);
-                    while (isConnected)
-                    {
-                        string output = reader.ReadLine();
-                        CommandMessage msg = JsonConvert.DeserializeObject<CommandMessage>(output);
-                        if (msg.Command == (int)CommandEnum.ExitCommand)
-                        {
-                            Disconnect();
-                            break;
-                        }
-                        DataRecieved?.Invoke(this, new CommandRecievedEventArgs(msg.Command, msg.Args));
-                        Thread.Sleep(250);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            });
-            t.Start();
+                NetworkStream stream = client.GetStream();
+                StreamReader reader = new StreamReader(stream);
+                string output = reader.ReadLine();
+                CommandMessage msg = JsonConvert.DeserializeObject<CommandMessage>(output);
+                return msg;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return null;
         }
 
         // Writes a command message to server.

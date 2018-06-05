@@ -1,0 +1,28 @@
+﻿@model ImageWebService.Models.Config
+@{
+    ViewBag.Title = "Config";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Config</h2>
+
+<p>
+    Output Directory:
+    @Model.OutputDir
+    <br />
+    Source Name:
+    @Model.SourceName
+    <br />
+    Log Name:
+    @Model.LogName
+    <br />
+    Thumbnail Size:
+    @Model.ThumbnailSize
+    <br />
+</p>
+
+@foreach (var item in Model.DirectoryHandlers)
+{
+    <a>@item</a>
+    <br />
+}

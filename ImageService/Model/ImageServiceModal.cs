@@ -6,6 +6,9 @@ using System.Drawing.Imaging;
 using System.Text;
 using ImageService.Infastructure.Enums;
 using ImageService.Logging.Model;
+using System.Net.Sockets;
+using ImageService.Communication.Model;
+using Newtonsoft.Json;
 
 namespace ImageService.Model
 {
@@ -22,7 +25,7 @@ namespace ImageService.Model
 			// Creates Thumbnails subdir on construction.
 			m_ThumbnailFolder = Path.Combine(m_OutputFolder, "Thumbnails");
 			m_thumbnailSize = thumbnail_size;
-		}
+        }
 
 		/// <summary>
 		/// Creates date directories for picture and thumbnail,

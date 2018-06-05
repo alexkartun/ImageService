@@ -31,6 +31,7 @@ namespace ImageService.Controller
                 { (int) CommandEnum.CloseCommand, new CloseCommand(CloseModal) },
                 { (int) CommandEnum.LogCommand, new LogCommand(LogsModal) },
                 { (int) CommandEnum.GetConfigCommand, new ConfigCommand(SettingsModal) }
+                
             };
         }
 		/// <summary>

@@ -40,7 +40,7 @@ namespace ImageService.Communication
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
-                    ExitRecieved(this, new CommandRecievedEventArgs((int)CommandEnum.ExitCommand, null, client));
+                    //ExitRecieved(this, new CommandRecievedEventArgs((int)CommandEnum.ExitCommand, null, client));
                 }
             }).Start();       
         }
