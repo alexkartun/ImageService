@@ -4,19 +4,17 @@ using ImageWebService.Communication;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Configuration;
 using System.IO;
-using System.Linq;
-using System.Web;
 
 namespace ImageWebService.Models
 {
-    public class ImageWebModel
+    public class MainModel
     {
-        public ImageWebModel()
+        public MainModel()
         {
-            Students = new List<Student>();
+            SetServiceStatus();
+            SetStudents();
+            SetNumberOfPhotos();
         }
 
         public WebChannel ClientConnection
@@ -30,7 +28,7 @@ namespace ImageWebService.Models
         public string Active { get; set; }
         public void SetServiceStatus()
         {
-            if (ClientConnection.IsConnected)
+            if (ClientConnection.IsConnected())
             {
                 Active = "Active";
             }
@@ -44,7 +42,7 @@ namespace ImageWebService.Models
         public void SetStudents()
         {
             Students = new List<Student>();
-            if (ClientConnection.IsConnected)
+            if (ClientConnection.IsConnected())
             {
                 CommandMessage req = new CommandMessage((int)CommandEnum.GetConfigCommand);
                 ClientConnection.Write(req);
@@ -61,18 +59,18 @@ namespace ImageWebService.Models
             }
         }
 
-        public int NumberOfPhotos { get; set; }
+        public string NumberOfPhotos { get; set; }
         public void SetNumberOfPhotos()
         {
-            NumberOfPhotos = 0;
-            if (ClientConnection.IsConnected)
+            NumberOfPhotos = "";
+            if (ClientConnection.IsConnected())
             {
                 CommandMessage req = new CommandMessage((int)CommandEnum.GetConfigCommand);
                 ClientConnection.Write(req);
                 CommandMessage answer = ClientConnection.Read();
 
                 String rootPath = answer.Args[0] + @"\OutputDir";
-                NumberOfPhotos = Directory.GetFiles(rootPath, "*", SearchOption.AllDirectories).Length;
+                NumberOfPhotos = Directory.GetFiles(rootPath, "*", SearchOption.AllDirectories).Length.ToString();
             }
         }
     }

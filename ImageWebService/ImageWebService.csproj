@@ -145,9 +145,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Config.cs" />
-    <Compile Include="Models\ImageWebModel.cs" />
-    <Compile Include="Models\Logs.cs" />
+    <Compile Include="Models\ConfigModel.cs" />
+    <Compile Include="Models\MainModel.cs" />
+    <Compile Include="Models\Log.cs" />
+    <Compile Include="Models\LogsModel.cs" />
     <Compile Include="Models\Student.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -187,10 +188,10 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\Logs.cshtml" />
     <Content Include="Views\Home\Config.cshtml" />
+    <Content Include="Views\Home\RemoveConfirm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Db\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

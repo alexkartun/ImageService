@@ -38,12 +38,13 @@ namespace ImageWebService.Communication
             }
         }
 
-        public bool IsConnected
+        public bool IsConnected()
         {
-            get
+            try
             {
-                return client.Connected;
+                return !(client.Client.Poll(1, SelectMode.SelectRead) && client.Available == 0);
             }
+            catch (SocketException) { return false; }
         }
 
         // Connects to ImageService server.

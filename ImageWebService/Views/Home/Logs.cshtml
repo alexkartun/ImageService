@@ -1,38 +1,40 @@
-﻿@model ImageWebService.Models.Logs
+﻿@using ImageWebService.Models
+@model IEnumerable<ImageWebService.Models.Log>
 @{
     ViewBag.Title = "Logs";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Logs</h2>
-Type:
-@using (Html.BeginForm("LogsByType", "Home"))
+<h2> Service Logs </h2>
+
+@using (Html.BeginForm("LogsByType", "Home", FormMethod.Post))
 {
-    @Html.TextBoxFor(Model => Model.Type)
-    <input type="submit" value="Type" class="btn-default" />
+    @Html.DropDownList("LogType",
+                    new SelectList(Enum.GetValues(typeof(LogType))),
+                    "Select type",
+                    new { @class = "form-control" })
+    <input type="submit" value="Filter" class="btn-info" />
 }
 
 <table class="table">
     <tr>
         <th>
-            Message
+            @Html.DisplayNameFor(model => model.Message)
         </th>
         <th>
-            Type
+            @Html.DisplayNameFor(model => model.Type)
         </th>
     </tr>
 
-    @foreach (var item in Model.ServiceLogs)
+    @foreach (var item in Model)
     {
         <tr>
             <td>
-                @item.Message
+                @Html.DisplayFor(mItem => item.Message)
             </td>
             <td>
-                @item.Status.ToString()
+                @Html.DisplayFor(mItem => item.Type)
             </td>
         </tr>
     }
 </table>
-
-

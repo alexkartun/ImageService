@@ -1,4 +1,4 @@
-﻿@model ImageWebService.Models.ImageWebModel
+﻿@model ImageWebService.Models.MainModel
 @{
     ViewBag.Title = "Image Web Service";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -9,11 +9,13 @@
 <p>
     Server Status:
     @Model.Active
-    <br />
+</p>
+<br />
+<p>
     Server Photos:
     @Model.NumberOfPhotos
 </p>
-
+<br />
 
 <table class="table">
     <tr>
@@ -32,13 +34,13 @@
     {
         <tr>
             <td>
-                @item.ID
+                @Html.DisplayFor(mItem => item.ID)
             </td>
             <td>
-                @item.FirstName
+                @Html.DisplayFor(mItem => item.FirstName)
             </td>
             <td>
-                @item.LastName
+                @Html.DisplayFor(mItem => item.LastName)
             </td>
         </tr>
     }

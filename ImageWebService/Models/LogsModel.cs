@@ -10,11 +10,11 @@ using System.Web;
 
 namespace ImageWebService.Models
 {
-    public class Logs
+    public class LogsModel
     {
-        public Logs()
+        public LogsModel()
         {
-            ServiceLogs = new List<MessageRecievedEventArgs>();
+            SetLogs();
         }
 
         public WebChannel ClientConnection
@@ -25,14 +25,11 @@ namespace ImageWebService.Models
             }
         }
 
-        [Required]
-        public string Type { get; set; }
-
-        public List<MessageRecievedEventArgs> ServiceLogs { get; set; }
-        public void SetLogsByType()
+        public List<Log> ServiceLogs { get; set; }
+        public void SetLogs()
         {
-            ServiceLogs = new List<MessageRecievedEventArgs>();
-            if (ClientConnection.IsConnected)
+            ServiceLogs = new List<Log>();
+            if (ClientConnection.IsConnected())
             {
                 CommandMessage req = new CommandMessage((int)CommandEnum.LogCommand);
                 ClientConnection.Write(req);
@@ -40,12 +37,28 @@ namespace ImageWebService.Models
                 for (int i = 0; i < answer.Args.Length; i += 2)
                 {
                     string m = answer.Args[i];
-                    MessageTypeEnum t = MessageRecievedEventArgs.GetTypeEnum(Int32.Parse(answer.Args[i + 1]));
-                    MessageRecievedEventArgs log = new MessageRecievedEventArgs(m, t);
+                    string t = MessageRecievedEventArgs.GetTypeEnum(Int32.Parse(answer.Args[i + 1])).ToString();
+                    Log log = new Log(t, m);
                     // Adds a single log to an observables logs list.
-                    if (Type == null || Type == log.Status.ToString())
-                        ServiceLogs.Add(log);
+                    ServiceLogs.Add(log);
                 }
+            }
+        }
+
+        public void FilterLogsByType(string type)
+        {
+            SetLogs();
+            if (type != "")
+            {
+                List<Log> temp_logs = new List<Log>();
+                foreach (Log m in ServiceLogs)
+                {
+                    if (m.Type.CompareTo(type) == 0)
+                    {
+                        temp_logs.Add(m);
+                    }
+                }
+                ServiceLogs = temp_logs;
             }
         }
     }

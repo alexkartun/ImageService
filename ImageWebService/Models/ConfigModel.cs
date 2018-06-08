@@ -8,11 +8,11 @@ using System.Web;
 
 namespace ImageWebService.Models
 {
-    public class Config
+    public class ConfigModel
     {
-        public Config()
+        public ConfigModel()
         {
-            DirectoryHandlers = new List<string>();
+            SetConfigData();
         }
 
         public WebChannel ClientConnection
@@ -26,7 +26,8 @@ namespace ImageWebService.Models
         public void SetConfigData()
         {
             DirectoryHandlers = new List<string>();
-            if (ClientConnection.IsConnected)
+            OutputDir = SourceName = LogName = ThumbnailSize = "";
+            if (ClientConnection.IsConnected())
             {
                 CommandMessage req = new CommandMessage((int)CommandEnum.GetConfigCommand);
                 ClientConnection.Write(req);
@@ -39,6 +40,17 @@ namespace ImageWebService.Models
                 {
                     DirectoryHandlers.Add(answer.Args[i]);
                 }
+            }
+        }
+
+        public void RemoveHandler(string handler)
+        {
+            if (ClientConnection.IsConnected())
+            {
+                CommandMessage req = new CommandMessage((int)CommandEnum.CloseCommand, new string[] { handler });
+                ClientConnection.Write(req);
+                CommandMessage answer = ClientConnection.Read();
+                DirectoryHandlers.Remove(handler);
             }
         }
 
