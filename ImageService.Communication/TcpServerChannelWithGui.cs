@@ -11,21 +11,20 @@ using System.Threading.Tasks;
 
 namespace ImageService.Communication
 {
-    public class TcpServerChannel
+    public class TcpServerChannelWithGui
     {
         private static string ip = "127.0.0.1";
         private static string port = "8001";
         private TcpListener server;
         private List<TcpClient> clients;
         private volatile bool server_status;
-        private ClientHandler handler;
-        public ClientHandler Client_Handler { get { return handler; } }
+        public ClientHandlerWithGui ClientHandler { get; set; }
 
-        public TcpServerChannel()
+        public TcpServerChannelWithGui()
         {
             clients = new List<TcpClient>();
-            handler = new ClientHandler();
-            handler.ExitRecieved += OnExitRecieved;
+            ClientHandler = new ClientHandlerWithGui();
+            ClientHandler.ExitRecieved += OnExitRecieved;
             server_status = true;
         }
         /// <summary>
@@ -75,7 +74,7 @@ namespace ImageService.Communication
                     {
                         TcpClient client = server.AcceptTcpClient();
                         clients.Add(client);
-                        handler.HandleClient(client);
+                        ClientHandler.HandleClient(client);
                     }
                     catch (SocketException e)
                     {
@@ -103,8 +102,9 @@ namespace ImageService.Communication
                 }
             }
             // Send for every client to exit.
-            //CommandMessage msg = new CommandMessage((int)CommandEnum.ExitCommand);
-            //SendCommandBroadCast(msg);
+            CommandMessage msg = new CommandMessage((int)CommandEnum.ExitCommand);
+            SendCommandBroadCast(msg);
         }
     }
 }
+

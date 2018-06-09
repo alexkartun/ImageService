@@ -12,16 +12,16 @@ using System.Configuration;
 
 namespace ImageService.Server
 {
-    class ImageServer : IServer
+    class ImageServerWithGui : IServer
     {
         private ILoggingService logging_service;
         private IImageController image_controller;
         private List<IDirectoryHandler> directory_handlers;
-        private TcpServerChannel channel;
+        private TcpServerChannelWithGui channel;
 
-        public ImageServer(ILoggingService logger, IImageController controller)
+        public ImageServerWithGui(ILoggingService logger, IImageController controller)
         {
-            channel = new TcpServerChannel();
+            channel = new TcpServerChannelWithGui();
             image_controller = controller;
             logging_service = logger;
             directory_handlers = new List<IDirectoryHandler>();
@@ -31,7 +31,7 @@ namespace ImageService.Server
         {
             CreateHandlers();
             // Bind event to handler client component.
-            channel.Client_Handler.CommandRecieved += OnCommandRecieved;
+            channel.ClientHandler.CommandRecieved += OnCommandRecieved;
             channel.Start();
         }
 
@@ -41,10 +41,10 @@ namespace ImageService.Server
             channel.Stop();
         }
 
-		private void OnCommandRecieved(object sender, CommandRecievedEventArgs c_args)
-		{
+        private void OnCommandRecieved(object sender, CommandRecievedEventArgs c_args)
+        {
             string output = image_controller.ExecuteCommand(c_args.Command, c_args.Args, out MessageTypeEnum status,
-				c_args.Client_Socket);
+                c_args.Client_Socket);
             // Update eventlogger and LogsModal with new log.
             if ((c_args.Command == (int)CommandEnum.NewFileCommand) ||
                 (c_args.Command == (int)CommandEnum.CloseCommand))
@@ -53,11 +53,11 @@ namespace ImageService.Server
                 string[] args = { output, ((int)status).ToString() };
                 image_controller.LogsModal.ServiceLogs.Add(args[0]);
                 image_controller.LogsModal.ServiceLogs.Add(args[1]);
-            }
-            // Send log to all clients.
-            //channel.SendCommandBroadCast(new CommandMessage((int) CommandEnum.LogCommand, args));       
-		}
-			
+                // Send log to all clients. 
+                channel.SendCommandBroadCast(new CommandMessage((int)CommandEnum.LogCommand, args));
+            }     
+        }
+
         /// <summary>
         /// Close sender handler. Remove from events.
         /// </summary>
@@ -65,23 +65,23 @@ namespace ImageService.Server
         /// <param name="close_args"> Closing args of specific handler. </param>
         private void OnCloseHandler(object sender, DirectoryCloseEventArgs close_args)
         {
-			IDirectoryHandler rm_dir = null;
-			foreach (IDirectoryHandler dir in directory_handlers)
+            IDirectoryHandler rm_dir = null;
+            foreach (IDirectoryHandler dir in directory_handlers)
             {
                 if (dir.Path.CompareTo(close_args.DirectoryPath) == 0)
                 {
                     dir.StopHandleDirectory();
-					rm_dir = dir;
-					break;
+                    rm_dir = dir;
+                    break;
                 }
             }
-			// Remove the directory from the handlers.
-			directory_handlers.Remove(rm_dir);
+            // Remove the directory from the handlers.
+            directory_handlers.Remove(rm_dir);
             // Remove the path from the config.
             image_controller.SettingsModal.Directory_Paths.Remove(close_args.DirectoryPath);
             // Update all clients.
-            //string[] args = { close_args.DirectoryPath };
-            //channel.SendCommandBroadCast(new CommandMessage((int)CommandEnum.CloseCommand, args));
+            string[] args = { close_args.DirectoryPath };
+            channel.SendCommandBroadCast(new CommandMessage((int)CommandEnum.CloseCommand, args));
         }
 
         /// <summary>
@@ -94,8 +94,6 @@ namespace ImageService.Server
             {
                 directory.StopHandleDirectory();
             }
-            // Update all clients that server is closing.
-            //channel.SendCommandBroadCast(new CommandMessage((int)CommandEnum.ExitCommand));
         }
 
         /// <summary>
@@ -115,7 +113,8 @@ namespace ImageService.Server
                 // Add directory path to Config.
                 image_controller.SettingsModal.Directory_Paths.Add(path);
             }
-			image_controller.CloseModal.OnClose += OnCloseHandler;
-		}
+            image_controller.CloseModal.OnClose += OnCloseHandler;
+        }
     }
 }
+

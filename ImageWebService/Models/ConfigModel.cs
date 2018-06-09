@@ -10,28 +10,19 @@ namespace ImageWebService.Models
 {
     public class ConfigModel
     {
-        public ConfigModel()
-        {
-            SetConfigData();
-        }
-
-        public WebChannel ClientConnection
-        {
-            get
-            {
-                return WebChannel.Instance;
-            }
-        }
-
-        public void SetConfigData()
+        /// <summary>
+        /// Set config data via server request.
+        /// </summary>
+        /// <param name="channel">Web channel for requests.</param>
+        public void SetConfigData(WebChannel channel)
         {
             DirectoryHandlers = new List<string>();
             OutputDir = SourceName = LogName = ThumbnailSize = "";
-            if (ClientConnection.IsConnected())
+            if (channel.IsConnected())
             {
                 CommandMessage req = new CommandMessage((int)CommandEnum.GetConfigCommand);
-                ClientConnection.Write(req);
-                CommandMessage answer = ClientConnection.Read();
+                channel.Write(req);
+                CommandMessage answer = channel.Read();
                 OutputDir = answer.Args[0];
                 SourceName = answer.Args[1];
                 LogName = answer.Args[2];
@@ -43,14 +34,22 @@ namespace ImageWebService.Models
             }
         }
 
-        public void RemoveHandler(string handler)
+        /// <summary>
+        /// Remove handler on server side.
+        /// </summary>
+        /// <param name="handler">Handler to remove.</param>
+        /// <param name="channel">Web channel for requests.</param>
+        public void RemoveHandler(string handler, WebChannel channel)
         {
-            if (ClientConnection.IsConnected())
+            if (handler != null && handler != "")
             {
-                CommandMessage req = new CommandMessage((int)CommandEnum.CloseCommand, new string[] { handler });
-                ClientConnection.Write(req);
-                CommandMessage answer = ClientConnection.Read();
-                DirectoryHandlers.Remove(handler);
+                if (channel.IsConnected())
+                {
+                    CommandMessage req = new CommandMessage((int)CommandEnum.CloseCommand, new string[] { handler });
+                    channel.Write(req);
+                    CommandMessage answer = channel.Read();
+                    DirectoryHandlers.Remove(handler);
+                }
             }
         }
 

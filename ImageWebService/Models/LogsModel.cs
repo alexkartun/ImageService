@@ -12,28 +12,20 @@ namespace ImageWebService.Models
 {
     public class LogsModel
     {
-        public LogsModel()
-        {
-            SetLogs();
-        }
-
-        public WebChannel ClientConnection
-        {
-            get
-            {
-                return WebChannel.Instance;
-            }
-        }
-
         public List<Log> ServiceLogs { get; set; }
-        public void SetLogs()
+        /// <summary>
+        /// Set logs via server request.
+        /// </summary>
+        /// <param name="channel">Web channel for request.</param>
+        public void SetLogs(WebChannel channel)
         {
             ServiceLogs = new List<Log>();
-            if (ClientConnection.IsConnected())
+            if (channel.IsConnected())
             {
                 CommandMessage req = new CommandMessage((int)CommandEnum.LogCommand);
-                ClientConnection.Write(req);
-                CommandMessage answer = ClientConnection.Read();
+                channel.Write(req);
+                CommandMessage answer = channel.Read();
+                // Iterate over every two arguments. First for message and second for type.
                 for (int i = 0; i < answer.Args.Length; i += 2)
                 {
                     string m = answer.Args[i];
@@ -45,9 +37,15 @@ namespace ImageWebService.Models
             }
         }
 
-        public void FilterLogsByType(string type)
+        /// <summary>
+        /// Filter all logs by type.
+        /// </summary>
+        /// <param name="type">Type filter with.</param>
+        /// <param name="channel">Web channel for requesting data.</param>
+        public void FilterLogsByType(string type, WebChannel channel)
         {
-            SetLogs();
+            SetLogs(channel);
+            // Type empty ignore.
             if (type != "")
             {
                 List<Log> temp_logs = new List<Log>();

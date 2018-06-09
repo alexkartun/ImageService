@@ -11,58 +11,50 @@ using System.Threading.Tasks;
 
 namespace ImageWebService.Communication
 {
-    // GUI as a singleton.
     public class WebChannel
     {
         private static string ip = "127.0.0.1";
         private static string port = "8001";
-        private static WebChannel instance = null;
         private TcpClient client;
 
-        private WebChannel()
+        public WebChannel()
         {
             client = new TcpClient();
             Connect();
         }
 
-
-        public static WebChannel Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new WebChannel();
-                }
-                return instance;
-            }
-        }
-
+        /// <summary>
+        /// Check for connection to host.
+        /// </summary>
+        /// <returns>Connectded = true. Not connected = false.</returns>
         public bool IsConnected()
         {
-            try
-            {
-                return !(client.Client.Poll(1, SelectMode.SelectRead) && client.Available == 0);
-            }
-            catch (SocketException) { return false; }
+            return client.Connected;
         }
 
-        // Connects to ImageService server.
-        public void Connect()
+        /// <summary>
+        /// Connect to server/host.
+        /// </summary>
+        /// <returns>Return true on success and false on failure.</returns>
+        public Boolean Connect()
         {
             try
             {
                 IPEndPoint ep = new IPEndPoint(IPAddress.Parse(ip), Int32.Parse(port));
                 client.Connect(ep);
+                return true;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
+            return false;
         }
 
-        // Reads commands from server (one line at the time).
-        // Finishes only on ExitCommand or connection failure.
+        /// <summary>
+        /// Read sync' data from server.
+        /// </summary>
+        /// <returns>Return the data accepted.</returns>
         public CommandMessage Read()
         {
             try
@@ -80,7 +72,10 @@ namespace ImageWebService.Communication
             return null;
         }
 
-        // Writes a command message to server.
+        /// <summary>
+        /// Write data to server sync'.
+        /// </summary>
+        /// <param name="msg">Data to write.</param>
         public void Write(CommandMessage msg)
         {
             try

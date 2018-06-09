@@ -1,6 +1,4 @@
-﻿using ImageService.Communication.Model;
-using ImageService.Infastructure.Enums;
-using ImageService.Infastructure.Event;
+﻿using ImageService.Infastructure.Event;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -10,18 +8,17 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ImageService.Communication
+namespace ImageService.Communication.Model
 {
-    public class ClientHandler
+    public class ClientHandlerWithWeb
     {
         public event EventHandler<CommandRecievedEventArgs> CommandRecieved;
-        public event EventHandler<CommandRecievedEventArgs> ExitRecieved;
 
         public void HandleClient(TcpClient client)
         {
-			// Establishes a connection from client to server.
-			// Via this connections commands will be received from server.
-			// Then, a notification to "CommandRecieved" listener (ImageService server) will be sent.
+            // Establishes a connection from client to server.
+            // Via this connections commands will be received from server.
+            // Then, a notification to "CommandRecieved" listener (ImageService server) will be sent.
             new Task(() =>
             {
                 try
@@ -40,11 +37,8 @@ namespace ImageService.Communication
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
-                    //ExitRecieved(this, new CommandRecievedEventArgs((int)CommandEnum.ExitCommand, null, client));
                 }
-            }).Start();       
+            }).Start();
         }
     }
-
 }
-

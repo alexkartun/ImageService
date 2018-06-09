@@ -1,0 +1,27 @@
+﻿
+@{
+    ViewBag.Title = "DeletePhotoConfirm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delete Photo Confirm</h2>
+
+<p>
+    Are you sure you want to delete this photo?
+    <br />
+    @ViewBag.name
+</p>
+
+<div>
+    <img src="@ViewBag.thumbnailPath" />
+</div>
+<br />
+
+<button id="btnOk" class="btn-danger">Delete</button>
+<button class="btn-default" onclick='window.location="Photos"'>Back</button>
+
+<script>
+    $("#btnOk").click(function () {
+        $.post("@Html.Raw(@Url.Action("RemoveImage", new { iPath = ViewBag.imagePath, tPath = ViewBag.thumbnailPath }))", function () { window.location.href = "Photos" });
+    });
+</script>

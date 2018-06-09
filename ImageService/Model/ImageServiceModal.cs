@@ -96,6 +96,8 @@ namespace ImageService.Model
 			Image thumb = image.GetThumbnailImage(
 				m_thumbnailSize, m_thumbnailSize, () => false, IntPtr.Zero);
 			thumb.Save(Path.Combine(thumbDest, name));
+            image.Dispose();
+            thumb.Dispose();
 		}
 
 		private static Regex r = new Regex(":");

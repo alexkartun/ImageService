@@ -6,29 +6,49 @@
 
 <h2>Service Config</h2>
 
-<p>
-    Output Directory:
-    @Model.OutputDir
-</p>
-<br />
-<p>
-    Source Name:
-    @Model.SourceName
-</p>
-<br />
-<p>
-    Log Name:
-    @Model.LogName
-</p>
-<br />
-<p>
-    Thumbnail Size:
-    @Model.ThumbnailSize
-</p>
-<br />
-
-@foreach (var item in Model.DirectoryHandlers)
-{
-    <a href="@Url.Action("RemoveConfirm", "Home", new {handler = @item})">@item</a>
-    <br />
-}
+<table class="table">
+    <tr>
+        <th>
+            Output Directory:
+        </th>
+        <th>
+            @Model.OutputDir
+        </th>
+    </tr>
+    <tr>
+        <th>
+            Source Name:
+        </th>
+        <th>
+            @Model.SourceName
+        </th>
+    </tr>
+    <tr>
+        <th>
+            Log Name:
+        </th>
+        <th>
+            @Model.LogName
+        </th>
+    </tr>
+    <tr>
+        <th>
+            Thumbnail Size:
+        </th>
+        <th>
+            @Model.ThumbnailSize
+        </th>
+    </tr>
+    <tr>
+        <th>
+            Directory Handlers:
+        </th>
+        <th id="handlersList">
+            @foreach (var item in Model.DirectoryHandlers)
+            {
+                <a href="@Url.Action("RemoveHandlerConfirm", "Home", new {handler = @item})">@item</a>
+                <br />
+            }
+        </th>
+    </tr>
+</table>

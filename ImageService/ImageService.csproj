@@ -90,7 +90,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Server\ImageServer.cs" />
+    <Compile Include="Server\ImageServerWithGui.cs" />
+    <Compile Include="Server\ImageServerWithWeb.cs" />
     <Compile Include="Server\IServer.cs" />
   </ItemGroup>
   <ItemGroup>

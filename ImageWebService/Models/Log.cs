@@ -6,6 +6,9 @@ using System.Web;
 
 namespace ImageWebService.Models
 {
+    /// <summary>
+    /// Enum for log types.
+    /// </summary>
     public enum LogType
     {
         WARNING,

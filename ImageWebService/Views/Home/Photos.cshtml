@@ -1,0 +1,27 @@
+﻿@model ImageWebService.Models.PhotosModel
+    @{
+        ViewBag.Title = "Photos";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
+    <h2> Service Photos </h2>
+
+    <div class="container" id="tourpackages-carousel">
+        <div class="row">
+            @foreach (var photo in Model.ThumbnailPhotos)
+            {
+                <div class="col-xs-18 col-sm-6 col-md-3">
+                    <div class="thumbnail">
+                        <img src="@photo.ThumbnailPath" alt="" class="img-circle">
+                        <div class="caption">
+                            <h4>@photo.Name</h4>
+                            <p>
+                                <a href="@Url.Action("ViewPhoto", "Home", new {path = photo.ImagePath, name = photo.Name, month = photo.Month, year = photo.Year})" class="btn btn-info btn-xs" role="button">View</a> 
+                                <a href="@Url.Action("DeletePhotoConfirm", "Home", new {iPath = photo.ImagePath, tPath = photo.ThumbnailPath, name = photo.Name})" class="btn btn-default btn-xs" role="button">Delete</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div><!-- End row -->
+    </div><!-- End container -->

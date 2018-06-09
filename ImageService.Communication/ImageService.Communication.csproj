@@ -43,10 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientHandler.cs" />
+    <Compile Include="ClientHandlerWithGui.cs" />
+    <Compile Include="ClientHandlerWithWeb.cs" />
     <Compile Include="Model\CommandMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TcpServerChannel.cs" />
+    <Compile Include="TcpServerChannelWithGui.cs" />
+    <Compile Include="TcpServerChannelWithWeb.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ImageService.Infastructure\ImageService.Infastructure.csproj">

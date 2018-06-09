@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = "RemoveHandlerConfirm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2> Confirmation </h2>
+<p>
+    Are you sure you want to delete @ViewBag.handler?
+</p>
+<br />
+<input type="button" value="Ok" id="btnOk" class="btn-default" />
+<input type="button" value="Close" id="btnClose" class="btn-danger" onclick='window.location="Config"'/>
+
+<script>
+    $("#btnOk").click(function () {
+        document.getElementById("btnOk").disabled = true;
+        document.getElementById("btnClose").disabled = true;
+        $.post("@Url.Action("RemoveHandler", new { handler = ViewBag.handler })", function () { window.location.href = "Config" });
+    });
+</script>
+

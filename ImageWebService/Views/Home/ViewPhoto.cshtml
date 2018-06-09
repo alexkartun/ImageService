@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewBag.Title = "ViewPhoto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>View Photo</h2>
+
+<p>
+    Photo Name: @ViewBag.Name
+    <br />
+    Photo Date: @ViewBag.Month\@ViewBag.Year
+</p>
+<br />
+
+<div>
+    <img src="@ViewBag.path" onclick='window.location="Photos"' />
+</div>
+<br />
+
+<button class="btn-default" onclick='window.location="Photos"'>Back</button>
