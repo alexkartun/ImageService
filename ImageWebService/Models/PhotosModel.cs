@@ -84,7 +84,7 @@ namespace ImageWebService.Models
                                     string imageRelativePath = 
                                       @"\OutputDir" + @"\" + yearName + @"\" + monthName + @"\" + imageName;
                                     // Get all image details.
-                                    string details = GetImageDetails(imageFullPath);
+                                    string details = GetImageDetails(imageRelativePath);
                                     ThumbnailPhotos.Add(
                                         new Photo(imageRelativePath, thumbnailRelativePath, 
                                                   imageName, yearName, monthName, details));
@@ -127,16 +127,17 @@ namespace ImageWebService.Models
         /// </summary>
         /// <param name="imagePath">Image path.</param>
         /// <returns>Image Details.</returns>
-        private string GetImageDetails(string imagePath)
+        private string GetImageDetails(string imageRelativePath)
         {
             string details;
             try
             {
-                using (FileStream fs = new FileStream(imagePath, FileMode.Open, FileAccess.Read))
-                using (Image myImage = Image.FromStream(fs, false, false))
+                string fullPath  = HttpContext.Current.Server.MapPath(imageRelativePath);
+                //using (FileStream fs = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+                using (Image myImage = Image.FromFile(fullPath))
                 {
                     PropertyItem propItem = myImage.GetPropertyItem(0x9286);
-                    details = Encoding.ASCII.GetString(propItem.Value);
+                    details = Encoding.UTF8.GetString(propItem.Value);
                 }
             }
             catch (Exception e)
