@@ -15,6 +15,7 @@
                         <img src="@photo.ThumbnailPath" alt="" class="img-circle">
                         <div class="caption">
                             <h4>@photo.Name</h4>
+                            <p>@photo.Details</p>
                             <p>
                                 <a href="@Url.Action("ViewPhoto", "Home", new {path = photo.ImagePath, name = photo.Name, month = photo.Month, year = photo.Year})" class="btn btn-info btn-xs" role="button">View</a> 
                                 <a href="@Url.Action("DeletePhotoConfirm", "Home", new {iPath = photo.ImagePath, tPath = photo.ThumbnailPath, name = photo.Name})" class="btn btn-default btn-xs" role="button">Delete</a>
