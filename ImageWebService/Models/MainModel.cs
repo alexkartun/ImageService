@@ -70,6 +70,7 @@ namespace ImageWebService.Models
                 CommandMessage answer = ClientConnection.Read();
 
                 String rootPath = answer.Args[0] + @"\OutputDir";
+				//TODO: run though all permitted suffixes (.jpg, .png etc.) instead of all files.
                 NumberOfPhotos = Directory.GetFiles(rootPath, "*", SearchOption.AllDirectories).Length.ToString();
             }
         }
