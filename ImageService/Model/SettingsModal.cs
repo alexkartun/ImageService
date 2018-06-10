@@ -17,16 +17,14 @@ namespace ImageService.Model
         private string source_name;
         private string log_name;
         private string thumbnail_size;
-        private string students_path;
         public List<string> Directory_Paths { get; set; }
 
-        public SettingsModal(string src_name, string log_name, string output_dir_path, string thumbnail_size, string stud_path)
+        public SettingsModal(string src_name, string log_name, string output_dir_path, string thumbnail_size)
         {
             output_directory = output_dir_path;
             source_name = src_name;
             this.log_name = log_name;
             this.thumbnail_size = thumbnail_size;
-            students_path = stud_path;
             Directory_Paths = new List<string>();
         }
 
@@ -34,7 +32,7 @@ namespace ImageService.Model
         {
             result = MessageTypeEnum.INFO;
 			// Static string type array holding APPCONFIG settings.
-            string[] service_data = { output_directory, source_name, log_name, thumbnail_size, students_path };
+            string[] service_data = { output_directory, source_name, log_name, thumbnail_size };
 			// Dynamic string type array (unfixed number of dirs) holding all active directory handlers. 
 			string[] dir_paths = Directory_Paths.ToArray();
 			// Union those to strig arrays.

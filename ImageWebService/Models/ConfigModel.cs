@@ -27,7 +27,7 @@ namespace ImageWebService.Models
                 SourceName = answer.Args[1];
                 LogName = answer.Args[2];
                 ThumbnailSize = answer.Args[3];
-                for (int i = 5; i < answer.Args.Length; i++)
+                for (int i = 4; i < answer.Args.Length; i++)
                 {
                     DirectoryHandlers.Add(answer.Args[i]);
                 }

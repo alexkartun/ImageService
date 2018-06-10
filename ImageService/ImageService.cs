@@ -44,7 +44,6 @@ namespace ImageService
             string eventSourceName = ConfigurationManager.AppSettings["SourceName"];
 			string logName = ConfigurationManager.AppSettings["LogName"];
             string output_dir_path = ConfigurationManager.AppSettings["OutputDir"];
-            string student_path = ConfigurationManager.AppSettings["StudentDetails"];
             string thumbnail_size = ConfigurationManager.AppSettings["ThumbnailSize"];
             eventLogger = new EventLog
             {
@@ -56,7 +55,7 @@ namespace ImageService
 			ICloseModal close_modal = new CloseModal();
             IImageServiceModal image_modal = new ImageServiceModal(output_dir_path, int.Parse(thumbnail_size));
             ILogsServiceModal logs_modal = new LogsServiceModal();
-            ISettingsModal settings_modal = new SettingsModal(eventSourceName, logName, output_dir_path, thumbnail_size, student_path);
+            ISettingsModal settings_modal = new SettingsModal(eventSourceName, logName, output_dir_path, thumbnail_size);
             IImageController controller = new ImageController(image_modal, logs_modal, settings_modal, close_modal);
             image_server = new ImageServerWithWeb(image_logger, controller);
 		}

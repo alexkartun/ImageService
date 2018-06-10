@@ -133,7 +133,6 @@ namespace ImageWebService.Models
             try
             {
                 string fullPath  = HttpContext.Current.Server.MapPath(imageRelativePath);
-                //using (FileStream fs = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
                 using (Image myImage = Image.FromFile(fullPath))
                 {
                     PropertyItem propItem = myImage.GetPropertyItem(0x9286);

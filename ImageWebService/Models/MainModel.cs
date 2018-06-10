@@ -49,13 +49,7 @@ namespace ImageWebService.Models
             Students = new List<Student>();
             if (channel.IsConnected())
             {
-                // Request for config data.
-                CommandMessage req = new CommandMessage((int)CommandEnum.GetConfigCommand);
-                channel.Write(req);
-                CommandMessage answer = channel.Read();
-
-                // As 4 parameter in args is hard coded the student.txt path.
-                String rootPath = answer.Args[4];
+                string rootPath = HttpContext.Current.Server.MapPath(@"\students.txt");
                 string[] lines = File.ReadAllLines(rootPath);
 
                 foreach (string line in lines)
